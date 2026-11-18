@@ -1,0 +1,9 @@
+# Heal log
+
+Every repair to a failing test is recorded here. Rules: [HEALING_RULES.md](HEALING_RULES.md).
+
+| ID | Date | Test (spec) | Error seen | Cause (tooling / data / test) | Change made | Result |
+|----|------|-------------|------------|-------------------------------|-------------|--------|
+| H-001 | 2026-11-17 | `tests/ui/test_login.py::test_valid_credentials_open_my_account`, `tests/api/test_auth_api.py::test_r1_...` | UI stayed on /auth/login; API returned `423 Locked: Account locked, too many failed attempts` | Data: the shared demo account was locked by other users of the public site. This suite never sends wrong passwords to it. | Switched the default account to `customer2@` in `config/settings.py`. No test code or assertion changed. | Passed on re-run, 2026-11-17 |
+| H-002 | 2026-11-17 | `tests/ui/test_search.py::test_search_lists_only_matching_products` | Non-matching products listed (Bolt Cutters, Hammers) after searching "Pliers" | Wait (suspected): the caption updated before the product list, so the test read the old list. The API search test passed, which points away from a product bug. | `HomePage.search()` now waits for the search API response, then for the rendered count to match it. Assertion unchanged. | Passed on re-run, 2026-11-17. Cause confirmed as timing, not product. |
+| H-003 | 2026-11-18 | `BasePage.open()` (first seen in `tests/ui/test_login.py::test_unregistered_email_is_rejected`) | Setup error: `Page.goto: Timeout 30000ms exceeded ... waiting until "load"` | Tooling: the "load" event waits for every image and third-party script on a public site; one slow script stalled it. | `goto(..., wait_until="domcontentloaded")`. Tests already wait for their elements with `expect()`. No assertion changed. Setup failures now also get a screenshot. | Passed on re-run, 2026-11-18 (17/17) |
