@@ -11,9 +11,9 @@
 ## Next
 1. [x] Report shows screenshot + step log for each test (confirmed 2026-11-18). Healed H-003 (page-load timeout); confirmed 17/17 on re-run
 2. [x] Locked-account "no error message": not reproduced on 2026-11-18 (account unlocked). Recorded in `docs/BUGS.md` under "Investigated, not reproduced"
-3. [ ] Create a GitHub repo `toolshop-qa-portfolio` and push
+3. [x] Pushed to https://github.com/ganow-pk/toolshop-qa-portfolio
 4. [ ] GitHub: Settings → Pages → Source: **GitHub Actions**. Then run the "Tests" workflow
-5. [ ] Replace `YOUR-GITHUB-USERNAME` in `README.md` (badge + report link)
+5. [x] README badge + report link filled in (commit and push this change)
 6. [ ] Add the live report link to both resumes
 
 ## Ideas for later

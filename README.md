@@ -1,8 +1,8 @@
 # Toolshop QA Portfolio
 
-[![Tests](https://github.com/YOUR-GITHUB-USERNAME/toolshop-qa-portfolio/actions/workflows/tests.yml/badge.svg)](https://github.com/YOUR-GITHUB-USERNAME/toolshop-qa-portfolio/actions/workflows/tests.yml)
+[![Tests](https://github.com/ganow-pk/toolshop-qa-portfolio/actions/workflows/tests.yml/badge.svg)](https://github.com/ganow-pk/toolshop-qa-portfolio/actions/workflows/tests.yml)
 
-**[View the latest test report](https://YOUR-GITHUB-USERNAME.github.io/toolshop-qa-portfolio/)**
+**[View the latest test report](https://ganow-pk.github.io/toolshop-qa-portfolio/)**
 
 UI and API test automation for [Practice Software Testing](https://practicesoftwaretesting.com) (the "Toolshop" demo store), built with **Playwright, Python, and pytest** using the **Page Object Model**.
 
