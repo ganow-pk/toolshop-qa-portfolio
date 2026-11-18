@@ -2,7 +2,7 @@
 
 [![Tests](https://github.com/ganow-pk/toolshop-qa-portfolio/actions/workflows/tests.yml/badge.svg)](https://github.com/ganow-pk/toolshop-qa-portfolio/actions/workflows/tests.yml)
 
-**[View the latest test report](https://ganow-pk.github.io/toolshop-qa-portfolio/)**
+**[View the test reports](https://ganow-pk.github.io/toolshop-qa-portfolio/)**: the daily CI run (API) and the latest full run (UI + API)
 
 UI and API test automation for [Practice Software Testing](https://practicesoftwaretesting.com) (the "Toolshop" demo store), built with **Playwright, Python, and pytest** using the **Page Object Model**.
 
@@ -14,7 +14,7 @@ This repo shows how I work as a QA engineer, not just how I write test code:
 | **Healing rules**: how flaky tests get fixed without hiding real bugs, with a heal log | [docs/HEALING_RULES.md](docs/HEALING_RULES.md), [docs/heal_log.md](docs/heal_log.md) |
 | **AI guardrails**: how I use an AI coding assistant safely | [docs/AI_GUARDRAILS.md](docs/AI_GUARDRAILS.md) |
 | **Bug reports** for defects found | [docs/BUGS.md](docs/BUGS.md), [Issues](../../issues) |
-| A daily **CI run** that publishes the HTML report to GitHub Pages | [.github/workflows/tests.yml](.github/workflows/tests.yml) |
+| A daily **CI run** that publishes the HTML reports to GitHub Pages | [.github/workflows/tests.yml](.github/workflows/tests.yml) |
 
 ## Project layout
 ```
@@ -45,6 +45,17 @@ The report is written to `report/index.html`. Screenshots and traces of failures
 ```bash
 TOOLSHOP_BASE_URL=https://with-bugs.practicesoftwaretesting.com pytest
 ```
+
+## Why UI tests don't run in CI
+On the first CI run, all 7 API tests passed and all 10 UI tests failed. The failure screenshots
+embedded in the report showed why: the site's **Cloudflare "verify you are human" check** blocks
+browsers running on GitHub's cloud runners. From a normal machine, all 17 tests pass.
+
+The cause is the environment, not the tests or the product, and getting past a bot check would
+defeat its purpose. So the pipeline is built around it:
+- **CI** runs the API tests live every day.
+- **The full suite** runs locally with `python scripts/publish_local_run.py`, which saves the dated report to
+  `reports/local-full-run.html`. CI publishes it next to the API report.
 
 ## Design choices
 - **Locators use `data-test` attributes** through `get_by_test_id()`. They don't break when styling changes.

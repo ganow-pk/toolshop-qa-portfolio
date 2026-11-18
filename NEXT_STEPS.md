@@ -12,7 +12,8 @@
 1. [x] Report shows screenshot + step log for each test (confirmed 2026-11-18). Healed H-003 (page-load timeout); confirmed 17/17 on re-run
 2. [x] Locked-account "no error message": not reproduced on 2026-11-18 (account unlocked). Recorded in `docs/BUGS.md` under "Investigated, not reproduced"
 3. [x] Pushed to https://github.com/ganow-pk/toolshop-qa-portfolio
-4. [ ] GitHub: Settings → Pages → Source: **GitHub Actions**. Then run the "Tests" workflow
+4. [x] Pages on (Source: GitHub Actions). First CI run: API 7/7 passed, UI 10/10 blocked by the site's Cloudflare bot check
+4b. [ ] CI now runs API tests only; full run is published from the Mac with `python scripts/publish_local_run.py`, then commit + push
 5. [x] README badge + report link filled in (commit and push this change)
 6. [ ] Add the live report link to both resumes
 

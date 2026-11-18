@@ -5,5 +5,6 @@ venv/
 .idea/
 .pytest_cache/
 report/
+public/
 test-results/
 .env

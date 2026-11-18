@@ -1,11 +1,15 @@
 name: Tests
 
+# UI tests are not run here: the practice site's Cloudflare bot check blocks
+# browsers on GitHub's cloud runners. The API tests run live every day; the
+# full UI + API run is published from a local machine (scripts/publish_local_run.py).
+
 on:
   push:
     branches: [main]
   workflow_dispatch:        # "Run workflow" button on GitHub
   schedule:
-    - cron: "17 13 * * *"   # daily, so the report always shows a recent run
+    - cron: "17 13 * * *"   # daily, so the API report always shows a recent run
 
 permissions:
   contents: read
@@ -28,26 +32,27 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-          python -m playwright install --with-deps chromium
+        run: pip install -r requirements.txt
 
-      - name: Run tests
-        run: pytest
+      - name: Run API tests
+        run: pytest -m api --html=public/ci-api/index.html
 
-      - name: Keep screenshots and traces of failures
+      - name: Build the report site
         if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: test-results/
-          if-no-files-found: ignore
+        run: |
+          mkdir -p public/full-run
+          cp site/index.html public/index.html
+          if [ -f reports/local-full-run.html ]; then
+            cp reports/local-full-run.html public/full-run/index.html
+          else
+            echo "<p>No local full run published yet.</p>" > public/full-run/index.html
+          fi
 
-      - name: Prepare report for GitHub Pages
+      - name: Prepare site for GitHub Pages
         if: always()
         uses: actions/upload-pages-artifact@v3
         with:
-          path: report/
+          path: public/
 
   publish-report:
     needs: test
