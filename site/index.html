@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toolshop QA Portfolio - Test Reports</title>
+<style>
+  :root { --ink:#1d2330; --muted:#5b6474; --line:#e3e6ec; --ok:#1f7a4d; --accent:#1d5fa8; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; color:var(--ink); background:#f7f8fa; line-height:1.5; }
+  main { max-width:760px; margin:0 auto; padding:48px 20px; }
+  h1 { font-size:1.7rem; margin:0 0 6px; }
+  .sub { color:var(--muted); margin:0 0 32px; }
+  .card { display:block; background:#fff; border:1px solid var(--line); border-radius:10px; padding:20px 22px; margin-bottom:16px; text-decoration:none; color:inherit; }
+  .card:hover { border-color:var(--accent); }
+  .card h2 { font-size:1.15rem; margin:0 0 4px; color:var(--accent); }
+  .card p { margin:4px 0 0; color:var(--muted); }
+  .meta { font-size:.92rem; color:var(--ink); margin-top:10px; }
+  .note { background:#fff; border-left:4px solid var(--accent); padding:14px 18px; border-radius:6px; color:var(--muted); font-size:.95rem; }
+  footer { margin-top:32px; font-size:.9rem; color:var(--muted); }
+  a { color:var(--accent); }
+
+</style>
+</head>
+<body>
+<main>
+  <h1>Toolshop QA Portfolio</h1>
+  <p class="sub">Playwright + Python + pytest (Page Object Model) against the Practice Software Testing "Toolshop" demo store.</p>
+
+  <a class="card" href="full-run/">
+    <h2>Full run: UI + API (17 tests) &rarr;</h2>
+    <p>Every test with its ISTQB technique, an evidence screenshot, and a step-by-step log. Run from a local machine.</p>
+    <p class="meta">Last run: <strong><span id="local-run"><!--LOCAL_RUN-->2026-11-18 08:51 MST (17 passed)<!--/LOCAL_RUN--></span></strong></p>
+  </a>
+
+  <a class="card" href="ci-api/">
+    <h2>Daily CI run: API tests &rarr;</h2>
+    <p>Runs automatically every day on GitHub Actions against the live REST API.</p>
+  </a>
+
+  <div class="note">
+    <strong>Why the UI tests don't run in CI:</strong> the practice site protects its web pages with a Cloudflare
+    "verify you are human" check that blocks cloud-hosted browsers such as GitHub's runners. The API tests
+    aren't affected, so they run live in CI. The full suite runs from a local machine, and its report is published here with its date.
+    Getting past a bot check would defeat its purpose, so the suite doesn't try.
+  </div>
+
+  <footer>Source and docs: <a href="https://github.com/ganow-pk/toolshop-qa-portfolio">github.com/ganow-pk/toolshop-qa-portfolio</a></footer>
+</main>
+</body>
+</html>
