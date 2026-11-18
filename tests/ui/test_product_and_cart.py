@@ -14,6 +14,7 @@ from playwright.sync_api import expect
 pytestmark = [pytest.mark.ui]
 
 
+@pytest.mark.healed("H-004")
 @pytest.mark.istqb("Boundary Value Analysis")
 def test_quantity_cannot_go_below_one(product_page):
     expect(product_page.quantity).to_have_value("1")
@@ -23,6 +24,7 @@ def test_quantity_cannot_go_below_one(product_page):
     expect(product_page.quantity).to_have_value("1")
 
 
+@pytest.mark.healed("H-004")
 @pytest.mark.istqb("Boundary Value Analysis")
 def test_quantity_increases_from_one_to_two(product_page):
     expect(product_page.quantity).to_have_value("1")
@@ -33,6 +35,7 @@ def test_quantity_increases_from_one_to_two(product_page):
 
 
 @pytest.mark.smoke
+@pytest.mark.healed("H-004")
 @pytest.mark.istqb("State Transition Testing")
 def test_cart_count_follows_each_add(product_page):
     cart_count = product_page.header.cart_quantity

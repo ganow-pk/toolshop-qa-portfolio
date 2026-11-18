@@ -3,14 +3,36 @@
 Change a value here (or set the matching environment variable) and the whole
 suite follows. Tests and page objects never hard-code URLs or credentials.
 
-Example: point the suite at the intentionally buggy build of the app
-    TOOLSHOP_BASE_URL=https://with-bugs.practicesoftwaretesting.com pytest
+Switch the whole suite to another environment with one word:
+    TOOLSHOP_ENV=with-bugs pytest
 """
 import os
 
-# Web app and REST API under test (public practice site by Testsmith).
-BASE_URL = os.getenv("TOOLSHOP_BASE_URL", "https://practicesoftwaretesting.com")
-API_URL = os.getenv("TOOLSHOP_API_URL", "https://api.practicesoftwaretesting.com")
+# Environment profiles. Each one is a complete description of a place to test.
+#   route_prefix: "/#" for builds that use hash routing (pages live at /#/auth/login)
+ENVIRONMENTS = {
+    "main": {
+        "base_url": "https://practicesoftwaretesting.com",
+        "api_url": "https://api.practicesoftwaretesting.com",
+        "route_prefix": "",
+    },
+    # Intentionally buggy build of the same app, made for bug-hunting practice.
+    "with-bugs": {
+        "base_url": "https://with-bugs.practicesoftwaretesting.com",
+        "api_url": "https://api-with-bugs.practicesoftwaretesting.com",
+        "route_prefix": "/#",
+    },
+}
+
+ENV_NAME = os.getenv("TOOLSHOP_ENV", "main")
+if ENV_NAME not in ENVIRONMENTS:
+    raise ValueError(f"TOOLSHOP_ENV={ENV_NAME!r} is not one of {sorted(ENVIRONMENTS)}")
+_env = ENVIRONMENTS[ENV_NAME]
+
+# Single values can still be overridden one at a time.
+BASE_URL = os.getenv("TOOLSHOP_BASE_URL", _env["base_url"])
+API_URL = os.getenv("TOOLSHOP_API_URL", _env["api_url"])
+ROUTE_PREFIX = os.getenv("TOOLSHOP_ROUTE_PREFIX", _env["route_prefix"])
 
 # Public demo account published by the site for practice.
 # Heal H-001: "customer@" was locked by other users of this public site

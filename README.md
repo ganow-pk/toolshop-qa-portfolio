@@ -13,6 +13,7 @@ This repo shows how I work as a QA engineer, not just how I write test code:
 | Every test is tagged with its **ISTQB test-design technique**, and the suite refuses to run an untagged test | [docs/TEST_DESIGN.md](docs/TEST_DESIGN.md) |
 | **Healing rules**: how flaky tests get fixed without hiding real bugs, with a heal log | [docs/HEALING_RULES.md](docs/HEALING_RULES.md), [docs/heal_log.md](docs/heal_log.md) |
 | **AI guardrails**: how I use an AI coding assistant safely | [docs/AI_GUARDRAILS.md](docs/AI_GUARDRAILS.md) |
+| **Exploratory testing**: session charters and reports (SBTM) | [docs/exploratory/](docs/exploratory/) |
 | **Bug reports** for defects found | [docs/BUGS.md](docs/BUGS.md), [Issues](../../issues) |
 | A daily **CI run** that publishes the HTML reports to GitHub Pages | [.github/workflows/tests.yml](.github/workflows/tests.yml) |
 
@@ -41,9 +42,9 @@ pytest --headed -m ui     # watch the browser
 ```
 The report is written to `report/index.html`. Screenshots and traces of failures go to `test-results/`. Open a trace with `playwright show-trace <file>.zip`.
 
-**Point the suite at another environment** without touching code:
+**Point the suite at another environment** without touching code (profiles live in `config/settings.py`):
 ```bash
-TOOLSHOP_BASE_URL=https://with-bugs.practicesoftwaretesting.com pytest
+TOOLSHOP_ENV=with-bugs pytest     # the site's intentionally buggy build
 ```
 
 ## Why UI tests don't run in CI

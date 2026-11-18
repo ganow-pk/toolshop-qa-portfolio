@@ -13,6 +13,9 @@ class HomePage(BasePage):
         self.search_button = page.get_by_test_id("search-submit")
         self.search_caption = page.get_by_test_id("search-caption")
         self.product_names = page.get_by_test_id("product-name")
+        # Product cards are links tagged data-test="product-<id>".
+        self.product_cards = page.locator("a[data-test^='product-']")
+        self.in_stock_cards = self.product_cards.filter(has_not=page.get_by_test_id("out-of-stock"))
 
     def search(self, term: str) -> None:
         log.info("Search for %r", term)
@@ -37,7 +40,11 @@ class HomePage(BasePage):
         log.info("Products on page: %s", ", ".join(names) or "(none)")
         return names
 
-    def open_first_product(self) -> None:
+    def open_first_in_stock_product(self) -> None:
+        # Heal H-004: quantity and cart tests need a product that can be bought.
+        # Stock differs between builds, so the test picks one instead of assuming.
         self.wait_for_products()
-        log.info("Open first product: %s", self.product_names.first.inner_text().strip())
-        self.product_names.first.click()
+        card = self.in_stock_cards.first
+        name = card.get_by_test_id("product-name")
+        log.info("Open first in-stock product: %s", name.inner_text().strip())
+        name.click()

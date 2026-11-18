@@ -9,6 +9,7 @@ labels: bug
 One sentence: what is wrong.
 
 **Environment**
+- Suite profile (`TOOLSHOP_ENV`): main / with-bugs
 - App URL:
 - Browser / version:
 - Date found:

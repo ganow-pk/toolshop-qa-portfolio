@@ -9,6 +9,7 @@ Then commit and push. GitHub Pages shows the new report a few minutes later.
 """
 import html
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -34,7 +35,9 @@ def count_results(report_html: str) -> dict:
 
 def main() -> int:
     print("Running the full suite (UI + API)...")
-    exit_code = subprocess.call([sys.executable, "-m", "pytest"], cwd=ROOT)
+    # The published "full run" is always the main environment.
+    env = {**os.environ, "TOOLSHOP_ENV": "main"}
+    exit_code = subprocess.call([sys.executable, "-m", "pytest"], cwd=ROOT, env=env)
 
     report_html = REPORT.read_text(encoding="utf-8")
     counts = count_results(report_html)

@@ -6,6 +6,7 @@ changes, a fix is one line in one file.
 """
 from playwright.sync_api import Page
 
+from config import settings
 from config.logger import log
 from pages.header import Header
 
@@ -19,9 +20,10 @@ class BasePage:
 
     def open(self) -> "BasePage":
         # Relative path: pytest-playwright joins it with base_url from pytest.ini / settings.
-        log.info("Open %s (%s)", type(self).__name__, self.PATH)
+        path = f"{settings.ROUTE_PREFIX}{self.PATH}"
+        log.info("Open %s (%s)", type(self).__name__, path)
         # Heal H-003: wait for the page structure, not for every image and
         # third-party script ("load"). Tests then wait for the exact element
         # they need with expect(), so nothing is checked too early.
-        self.page.goto(self.PATH, wait_until="domcontentloaded")
+        self.page.goto(path, wait_until="domcontentloaded")
         return self

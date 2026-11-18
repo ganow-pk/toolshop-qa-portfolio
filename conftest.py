@@ -60,7 +60,7 @@ def _log_test_header(request):
     technique = request.node.get_closest_marker("istqb")
     log.info("TEST  %s", request.node.name)
     log.info("ISTQB %s", technique.args[0] if technique else "-")
-    log.info("ENV   UI %s | API %s", settings.BASE_URL, settings.API_URL)
+    log.info("ENV   %s | UI %s | API %s", settings.ENV_NAME, settings.BASE_URL, settings.API_URL)
 
 @pytest.fixture(scope="session")
 def base_url() -> str:
@@ -92,7 +92,7 @@ def home_page(page) -> HomePage:
 
 @pytest.fixture
 def product_page(home_page) -> ProductPage:
-    home_page.open_first_product()
+    home_page.open_first_in_stock_product()
     product = ProductPage(home_page.page)
     product.wait_until_loaded()
     return product
@@ -145,4 +145,4 @@ def pytest_html_results_table_row(report, cells):
 
 @pytest.hookimpl(optionalhook=True)
 def pytest_html_report_title(report):
-    report.title = "Toolshop QA Portfolio - Test Report"
+    report.title = f"Toolshop QA Portfolio - Test Report ({settings.ENV_NAME})"
