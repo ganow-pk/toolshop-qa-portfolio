@@ -9,4 +9,5 @@ Sessions here follow **Session-Based Test Management (SBTM)**:
 
 | # | Charter | Environment | Status |
 |---|---------|-------------|--------|
-| 01 | [Bug hunt: browse, search, and filter](session-01-browse-search-filter.md) | with-bugs | Planned |
+| 01 | [Bug hunt: browse, search, and filter](session-01-browse-search-filter.md) | with-bugs | Planned (unguided) |
+| 02 | [Guided bug hunt: full app](session-02-guided-bug-hunt.md) | with-bugs | Done 2026-11-19: 22 findings, 9 not in the guide |

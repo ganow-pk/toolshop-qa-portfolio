@@ -20,7 +20,7 @@
 ## Round 2: show the work (started 2026-11-18)
 1. [x] (2026-11-18: 9 failures triaged; H-004 healed; 2 product-bug candidates) Run the suite against the buggy build: `TOOLSHOP_ENV=with-bugs pytest`, then triage every failure (locator difference vs. real bug)
 2. [ ] Exploratory session 01 (60 min) using `docs/exploratory/session-01-browse-search-filter.md`
-3. [~] Issue #1 filed (login validation). File each real bug as a GitHub issue (bug template), list it in `docs/BUGS.md`
+3. [x] Issues #1–#7 filed (2026-11-19); add screenshots to #2–#7. File each real bug as a GitHub issue (bug template), list it in `docs/BUGS.md`
 4. [ ] New tests: checkout (State Transition), registration form (Boundary Value Analysis)
 5. [ ] Accessibility checks (axe-core, WCAG)
 
