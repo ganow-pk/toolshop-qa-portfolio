@@ -70,6 +70,7 @@ browsers running on GitHub's cloud runners. From a normal machine, all 17 tests 
 The cause is the environment, not the tests or the product, and getting past a bot check would
 defeat its purpose. So the pipeline is built around it:
 - **CI** runs the API tests live every day.
+- **Pull requests** into main run the API tests too; the report is attached to the run, not published.
 - **The full suite** runs locally with `python scripts/publish_local_run.py`, which saves the dated report to
   `reports/local-full-run.html`. CI publishes it next to the API report.
 
