@@ -260,10 +260,14 @@ def _allure_labels(request):
         allure.dynamic.link(settings.HEAL_LOG_URL, name=f"Heal log: {heal_id}")
 
     # Allure lists every parametrize value on the test page. Never show a password.
+    # The stand-in names the test case, so cases stay distinct: Allure 3 tells
+    # cases apart by their shown values, and the same "******" for every case
+    # made it merge them into one test with a fake retry. (Allure's "masked"
+    # mode is not used: it still writes the real value into allure-results.)
     params = node.callspec.params if hasattr(node, "callspec") else {}
     for name in params:
         if "password" in name.lower():
-            allure.dynamic.parameter(name, "******")
+            allure.dynamic.parameter(name, f"****** ({node.callspec.id})")
 
 
 def _attach_trace_to_allure(item, report):
