@@ -18,3 +18,5 @@
 2. **At most two attempts per test.** If two honest fixes don't work, stop and investigate the product.
 3. **Log every heal** in [`heal_log.md`](heal_log.md): spec, error, cause, change, result.
 4. **Label the test** with `@pytest.mark.healed("H-00X")`. The HTML report shows the heal ID next to the result, so a healed pass is never presented as a clean pass.
+
+**First-run fixes are not heals.** A new test that has never passed or been merged is still being written. Fixing it is recorded in the PR description, not the heal log, and it gets no `healed` label. The rules above still apply: no loosened assertions, no hidden product bugs.

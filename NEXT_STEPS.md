@@ -20,11 +20,11 @@
 ## Round 2: show the work (started 2026-11-18)
 1. [x] (2026-11-18: 9 failures triaged; H-004 healed; 2 product-bug candidates) Run the suite against the buggy build: `TOOLSHOP_ENV=with-bugs pytest`, then triage every failure (locator difference vs. real bug)
 2. [ ] Exploratory session 01 (60 min) using `docs/exploratory/session-01-browse-search-filter.md`
-3. [x] Issues #1–#7 filed (2026-11-19); add screenshots to #2–#7. File each real bug as a GitHub issue (bug template), list it in `docs/BUGS.md`
-4. [ ] New tests: checkout (State Transition), registration form (Boundary Value Analysis)
+3. [x] Issues #1–#7 filed (2026-11-19), #8–#12 (2026-11-20); add screenshots to #2–#7. File each real bug as a GitHub issue (bug template), list it in `docs/BUGS.md`
+4. [x] Written 2026-11-19: `tests/ui/test_registration.py` (11 cases), `tests/ui/test_checkout.py` (3). First run on main 2026-11-20: 4/14; first-run fixes (Register click, Continue as Guest tab) -> 13/14. Red on purpose: `test_password_length_message_matches_the_rule` (#15). with-bugs: 9 passed, 2 red on #16 (10-character rule), 3 checkout tests skipped (no guest checkout on that build). Fixes listed in the PR description (not heals)
 5. [ ] Accessibility checks (axe-core, WCAG)
 6. [~] Allure report added 2026-11-20, local only (README, "Allure report"). Checked on with-bugs: labels, issue links #1/#8/#9, screenshots, traces, categories. Not yet in CI or on GitHub Pages
-7. [~] API tests retry once on network timeouts only (PR #13 CI flake; `conftest.py` rule 5, `docs/TEST_DESIGN.md`). Allure "Environment" category now catches API request timeouts. Branch `fix/api-timeout-retry`, not yet merged
+7. [x] API tests retry once on network timeouts only (PR #13 CI flake; `conftest.py` rule 5, `docs/TEST_DESIGN.md`). Allure "Environment" category now catches API request timeouts. Merged 2026-11-20 (PR #14)
 
 ## Ideas for later
 - More tests: checkout flow (State Transition), registration form (Boundary Value Analysis on password rules)

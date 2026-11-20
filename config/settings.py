@@ -10,17 +10,21 @@ import os
 
 # Environment profiles. Each one is a complete description of a place to test.
 #   route_prefix: "/#" for builds that use hash routing (pages live at /#/auth/login)
+#   guest_checkout: whether the build offers "Continue as Guest" at checkout
 ENVIRONMENTS = {
     "main": {
         "base_url": "https://practicesoftwaretesting.com",
         "api_url": "https://api.practicesoftwaretesting.com",
         "route_prefix": "",
+        "guest_checkout": True,
     },
     # Intentionally buggy build of the same app, made for bug-hunting practice.
     "with-bugs": {
         "base_url": "https://with-bugs.practicesoftwaretesting.com",
         "api_url": "https://api-with-bugs.practicesoftwaretesting.com",
         "route_prefix": "/#",
+        # No guest checkout on this build (checked 2026-11-20): checkout tests skip.
+        "guest_checkout": False,
     },
 }
 
@@ -33,6 +37,7 @@ _env = ENVIRONMENTS[ENV_NAME]
 BASE_URL = os.getenv("TOOLSHOP_BASE_URL", _env["base_url"])
 API_URL = os.getenv("TOOLSHOP_API_URL", _env["api_url"])
 ROUTE_PREFIX = os.getenv("TOOLSHOP_ROUTE_PREFIX", _env["route_prefix"])
+GUEST_CHECKOUT = _env["guest_checkout"]
 
 # Public demo account published by the site for practice.
 # Heal H-001: "customer@" was locked by other users of this public site
