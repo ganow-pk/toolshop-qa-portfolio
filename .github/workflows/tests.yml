@@ -49,9 +49,11 @@ jobs:
       - name: Run API tests
         run: pytest -m api --html=public/ci-api/index.html
 
-      # PRs only: keep the report with the run, so a failing PR can be inspected.
-      - name: Upload test report (PR)
-        if: always() && github.event_name == 'pull_request'
+      # PRs and develop: keep the report with the run as a download, so a failing
+      # PR can be inspected and develop's report previews the next release.
+      # (main publishes its report to GitHub Pages instead.)
+      - name: Upload test report (PR and develop)
+        if: always() && (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop')
         uses: actions/upload-artifact@v4
         with:
           name: api-test-report
