@@ -24,7 +24,7 @@ pages/                  Page objects. The only place locators live (data-test at
 api/toolshop_api.py     REST API client. The only place endpoint paths live
 tests/ui/               Browser tests
 tests/api/              API tests
-conftest.py             Fixtures and the suite-wide rules (technique tags, report columns, Allure labels)
+conftest.py             Fixtures and the suite-wide rules (technique tags, report columns, Allure labels, API retry)
 allurerc.mjs            Allure 3 settings (report name, output folder, failure categories)
 docs/                   Test design, healing rules, heal log, AI guardrails, bugs
 ```
@@ -60,7 +60,7 @@ What you'll see on each test:
 - **Labels and tags:** ISTQB technique, `smoke` / `ui` / `api`, and `healed H-00X` with a link to the [heal log](docs/heal_log.md). Tests are grouped under **UI tests** and **API tests**.
 - **Issue links:** tests that fail because of a known product bug link to the GitHub issue (`@allure.issue("8")`).
 - **Evidence:** the screenshot, the step log, and, for a failed UI test, the Playwright trace.
-- **Categories:** each failure is sorted into **Product defect** (assertion failed), **Test or locator problem** (timeout, strict mode), or **Environment** (Cloudflare, 423 Locked, network). The rules live in `config/allure_categories.json`; the first match wins. A category is a starting point for triage, not a verdict: a missing element can still be a product bug.
+- **Categories:** each failure is sorted into **Product defect** (assertion failed), **Test or locator problem** (timeout, strict mode), or **Environment** (Cloudflare, 423 Locked, network, API request timeout). The rules live in `config/allure_categories.json`; the first match wins. A category is a starting point for triage, not a verdict: a missing element can still be a product bug.
 
 ## Why UI tests don't run in CI
 On the first CI run, all 7 API tests passed and all 10 UI tests failed. The failure screenshots
@@ -77,5 +77,6 @@ defeat its purpose. So the pipeline is built around it:
 ## Design choices
 - **Locators use `data-test` attributes** through `get_by_test_id()`. They don't break when styling changes.
 - **Tests wait for the app, not the clock.** No `sleep()`. Playwright's `expect()` retries until the condition holds or times out.
+- **API tests get one retry, for network errors only.** If the practice site's API times out or refuses the connection, the test runs once more after 5 seconds. A failed assertion is never retried, UI tests are never retried, and every retry shows in both reports. See [docs/TEST_DESIGN.md](docs/TEST_DESIGN.md#retry-policy-api-tests-get-one-second-chance-for-network-errors-only).
 - **Negative login tests use an unregistered email**, so they never lock the shared demo account.
 - **Config-driven.** Changing environments or accounts is a settings change, not a code change.

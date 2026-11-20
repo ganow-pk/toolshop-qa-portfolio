@@ -2,7 +2,7 @@
   {
     "name": "Environment",
     "matchedStatuses": ["failed", "broken"],
-    "messageRegex": "^[\\s\\S]*(?:Cloudflare|Just a moment|Verify you are human|Account locked|\\b423 (?:Locked|==)|got 423|net::ERR_|ECONNREFUSED|ECONNRESET|ENOTFOUND|getaddrinfo|ConnectionError|Connection (?:refused|reset|aborted))[\\s\\S]*$"
+    "messageRegex": "^[\\s\\S]*(?:Cloudflare|Just a moment|Verify you are human|Account locked|\\b423 (?:Locked|==)|got 423|net::ERR_|APIRequestContext\\.\\w+: Timeout|ETIMEDOUT|EAI_AGAIN|socket hang up|ECONNREFUSED|ECONNRESET|ENOTFOUND|getaddrinfo|ConnectionError|Connection (?:refused|reset|aborted))[\\s\\S]*$"
   },
   {
     "name": "Product defect",

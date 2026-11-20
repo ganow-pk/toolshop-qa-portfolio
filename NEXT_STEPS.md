@@ -24,6 +24,7 @@
 4. [ ] New tests: checkout (State Transition), registration form (Boundary Value Analysis)
 5. [ ] Accessibility checks (axe-core, WCAG)
 6. [~] Allure report added 2026-11-20, local only (README, "Allure report"). Checked on with-bugs: labels, issue links #1/#8/#9, screenshots, traces, categories. Not yet in CI or on GitHub Pages
+7. [~] API tests retry once on network timeouts only (PR #13 CI flake; `conftest.py` rule 5, `docs/TEST_DESIGN.md`). Allure "Environment" category now catches API request timeouts. Branch `fix/api-timeout-retry`, not yet merged
 
 ## Ideas for later
 - More tests: checkout flow (State Transition), registration form (Boundary Value Analysis on password rules)
