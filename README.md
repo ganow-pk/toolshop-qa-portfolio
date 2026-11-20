@@ -70,9 +70,22 @@ browsers running on GitHub's cloud runners. From a normal machine, all 17 tests 
 The cause is the environment, not the tests or the product, and getting past a bot check would
 defeat its purpose. So the pipeline is built around it:
 - **CI** runs the API tests live every day.
-- **Pull requests** into main run the API tests too; the report is attached to the run, not published.
+- **Pull requests** (into develop or main) run the API tests too; the report is attached to the run, not published.
 - **The full suite** runs locally with `python scripts/publish_local_run.py`, which saves the dated report to
-  `reports/local-full-run.html`. CI publishes it next to the API report.
+  `reports/local-full-run.html`. CI publishes it next to the API report once it reaches main (see docs/RELEASING.md).
+
+## How changes are made
+```
+feature/* --PR--> develop --> release/vX.Y --PR--> main --> tag vX.Y + release notes --> merge main back into develop
+```
+- **Feature work** goes in a `feature/*` branch and a PR into `develop` (squash merge is fine).
+- **A release** is a `release/vX.Y` branch cut from `develop`, merged into `main` with a **merge commit**, never squash: a squash gives main a new commit that develop doesn't have, and the two branches drift apart.
+- After the merge: tag `vX.Y`, publish release notes, then merge `main` back into `develop`.
+- **Hotfixes** (`hotfix/*`) may PR straight into `main`; merge `main` back into `develop` afterwards.
+- A CI check (`release-source`) blocks PRs into main from any other branch.
+- **The live report is published from main only.** PRs and develop run the tests but never deploy.
+
+Checklist and release-notes template: [docs/RELEASING.md](docs/RELEASING.md).
 
 ## Design choices
 - **Locators use `data-test` attributes** through `get_by_test_id()`. They don't break when styling changes.

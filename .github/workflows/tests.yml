@@ -1,16 +1,20 @@
 name: Tests
 
+# Branch flow: feature/* --PR--> develop --> release/vX.Y --PR--> main --> tag vX.Y.
+# hotfix/* may PR straight into main. Every push and PR runs the API tests;
+# only main deploys the live report to GitHub Pages (see docs/RELEASING.md).
+#
 # UI tests are not run here: the practice site's Cloudflare bot check blocks
 # browsers on GitHub's cloud runners. The API tests run live every day; the
 # full UI + API run is published from a local machine (scripts/publish_local_run.py).
-# Pull requests into main run the same API tests but never deploy to GitHub Pages:
-# their report is attached to the run as a downloadable artifact instead.
+# Pull requests and develop never deploy to GitHub Pages: a PR's report is
+# attached to the run as a downloadable artifact instead.
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
   workflow_dispatch:        # "Run workflow" button on GitHub
   schedule:
     - cron: "17 13 * * *"   # daily, so the API report always shows a recent run
@@ -21,9 +25,11 @@ permissions:
   contents: read
 
 # PRs get their own group per PR, so a new push to the PR cancels its older run
-# but never cancels (or waits on) a deploy from main. Everything else shares "pages".
+# but never cancels (or waits on) a deploy from main. Runs on main share "pages";
+# runs on any other branch (develop, scheduled runs) get a group per branch, so
+# they can never cancel a main deploy either.
 concurrency:
-  group: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'pages' }}
+  group: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || (github.ref == 'refs/heads/main' && 'pages' || format('ci-{0}', github.ref)) }}
   cancel-in-progress: true
 
 jobs:
@@ -54,8 +60,9 @@ jobs:
             allure-results/
           if-no-files-found: warn
 
+      # main only (never a PR, never develop): build the site for GitHub Pages.
       - name: Build the report site
-        if: always() && github.event_name != 'pull_request'
+        if: always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
           mkdir -p public/full-run
           cp site/index.html public/index.html
@@ -66,15 +73,15 @@ jobs:
           fi
 
       - name: Prepare site for GitHub Pages
-        if: always() && github.event_name != 'pull_request'
+        if: always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
           path: public/
 
   publish-report:
     needs: test
-    # Never deploy from a PR; for everything else publish even if tests failed.
-    if: always() && github.event_name != 'pull_request'
+    # Deploy from main only, never from a PR or develop; publish even if tests failed.
+    if: always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -86,3 +93,38 @@ jobs:
     steps:
       - id: deploy
         uses: actions/deploy-pages@v4
+
+  # Scheduled runs always use the default branch, which is now develop, so they
+  # test develop and do not deploy. To keep the live report fresh, this job asks
+  # GitHub to run the workflow on main too. A workflow_dispatch sent with
+  # GITHUB_TOKEN does start a new run (unlike most events from GITHUB_TOKEN).
+  refresh-main-report:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Start a run on main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run tests.yml --ref main --repo "${{ github.repository }}"
+
+  # GitHub can't restrict which branch a PR comes from, so this check does:
+  # only release/* and hotfix/* branches may be merged into main.
+  # It is a required check on main; for PRs into develop it is skipped.
+  release-source:
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Check the PR comes from release/* or hotfix/*
+        env:
+          HEAD_REF: ${{ github.head_ref }}   # via env, never pasted into the script
+        run: |
+          case "$HEAD_REF" in
+            release/*|hotfix/*)
+              echo "OK: '$HEAD_REF' may be merged into main." ;;
+            *)
+              echo "::error::PRs into main must come from a release/* or hotfix/* branch, not '$HEAD_REF'. Open this PR into develop instead (see docs/RELEASING.md)."
+              exit 1 ;;
+          esac
