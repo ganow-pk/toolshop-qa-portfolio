@@ -11,7 +11,7 @@ Every test in this suite is tagged with the ISTQB black-box technique it applies
 | Error Guessing | Use experience to target likely mistakes. | `tests/ui/test_registration.py` (does the length error message match the rule?) |
 
 ## Avoiding side effects on a shared site
-- **Registration** rules are checked field by field: the form validates each field when the user leaves it, so the tests never submit and never create accounts.
+- **Registration** rules are checked one field at a time: the form only shows field errors after Register is clicked, so each test fills one field and clicks Register. The rest of the form is empty, so the browser blocks the submit, nothing reaches the app, and no account is created.
 - **Checkout** uses guest checkout, so no shared account is logged in or changed.
 
 ## A judgment call worth noting

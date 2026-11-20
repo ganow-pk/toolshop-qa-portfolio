@@ -26,6 +26,7 @@ def test_guest_checkout_moves_through_every_state(cart_with_item, checkout):
     cart_with_item.proceed()
 
     # State: Sign in -> continue as guest
+    checkout.open_guest_tab()
     expect(checkout.guest_email).to_be_visible()
     checkout.continue_as_guest(test_data.GUEST)
 

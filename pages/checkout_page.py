@@ -1,4 +1,4 @@
-from playwright.sync_api import Page
+from playwright.sync_api import Page, expect
 
 from config.logger import log
 from pages.base_page import BasePage
@@ -10,6 +10,9 @@ class CheckoutPage(BasePage):
     def __init__(self, page: Page) -> None:
         super().__init__(page)
         # Step 2: continue as guest
+        # The guest form sits behind a "Continue as Guest" tab. The tab has no
+        # data-test attribute on the live site, so it is found by role and name.
+        self.guest_tab = page.get_by_role("tab", name="Continue as Guest")
         self.guest_email = page.get_by_test_id("guest-email")
         self.guest_first_name = page.get_by_test_id("guest-first-name")
         self.guest_last_name = page.get_by_test_id("guest-last-name")
@@ -29,7 +32,14 @@ class CheckoutPage(BasePage):
         self.payment_success = page.get_by_test_id("payment-success-message")
         self.payment_error = page.get_by_test_id("payment-error-message")
 
+    def open_guest_tab(self) -> None:
+        """Show the guest form. Clicking the tab again is harmless."""
+        log.info("Sign-in step: open the 'Continue as Guest' tab")
+        self.guest_tab.click()
+
     def continue_as_guest(self, guest: dict) -> None:
+        self.open_guest_tab()
+        expect(self.guest_email).to_be_visible()
         log.info("Sign-in step: continue as guest %s %s", guest["first_name"], guest["last_name"])
         self.guest_email.fill(guest["email"])
         self.guest_first_name.fill(guest["first_name"])

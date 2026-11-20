@@ -17,6 +17,7 @@ Defects found while testing are filed as GitHub issues using the [bug report tem
 | [#10](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/10) | Add to favourites shows an error and adds nothing | with-bugs | Major | Exploratory (Session 02), guide hunt #7 | Open |
 | [#11](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/11) | "Home" link in the top navigation opens the Contact page | with-bugs | Major | Exploratory (Session 02), guide hunt #15 | Open |
 | [#12](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/12) | User menu shows "User Data not found" instead of the user's name after login | with-bugs | Minor | Automated test failure, confirmed by exploratory testing (Session 02, guide hunt #11) | Open |
+| [#15](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/15) | Registration: password error says "minimal 6 characters" but the rule is 8 | **main** | Minor | Automated test failure (Error Guessing), confirmed by hand | Open |
 
 ## Investigated, not reproduced (or reproduced later)
 | Date | Observation | Result |

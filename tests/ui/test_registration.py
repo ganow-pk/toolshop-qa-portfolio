@@ -1,7 +1,9 @@
-"""Registration form rules, checked field by field without submitting.
+"""Registration form rules, checked one field at a time.
 
-The form validates each field when the user leaves it, so no accounts are
-created on the shared demo site.
+The form only shows field errors after Register is clicked. Each test fills
+ONE field and clicks Register. The rest of the form is empty, so the browser
+blocks the submit: nothing reaches the app and no account is created on the
+shared demo site. Never fill a complete, valid form here.
 
 Boundary Value Analysis: test right at an edge and one step past it.
   Password length: rule is "at least 8 characters" -> test 7 and 8.
@@ -12,6 +14,7 @@ Equivalence Partitioning: phone must be digits only -> one value per group.
 Every password below also meets the other rules (upper and lower case,
 a number, a symbol), so only the length changes between 7 and 8.
 """
+import allure
 import pytest
 from playwright.sync_api import expect
 
@@ -35,6 +38,7 @@ def test_password_at_minimum_length_is_accepted(register_page):
     expect(register_page.error("password")).to_be_hidden()
 
 
+@allure.issue("15", name="#15 Password message says 6 characters, rule is 8 (main)")
 @pytest.mark.istqb("Error Guessing")
 def test_password_length_message_matches_the_rule(register_page):
     """The rule list under the field says "at least 8 characters".
