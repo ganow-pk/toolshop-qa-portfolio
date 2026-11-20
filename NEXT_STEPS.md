@@ -28,6 +28,7 @@
 8. [~] Git flow (2026-11-20): feature/* -> develop -> release/vX.Y -> main, hotfix/* -> main. CI deploys Pages from main only; `release-source` check guards main. See `docs/RELEASING.md`
 
 9. [~] Dashboard (2026-11-20, `feature/dashboard`, not committed): stacked pass/fail chart per run, CI history on the live site (main only), local history from plain `pytest` runs (`conftest.py` rule 6), `scripts/dashboard.sh`. CI also builds the API Allure report. Needs a first real run on main to confirm Pages history (`history/ci.json`)
+10. [~] Tooling tests (2026-11-20, `feature/tooling-checks`, not committed): `tooling_tests/` (52 checks, ~3 s) for the dashboard and history scripts, run by `scripts/check_tooling.sh` and first in CI. Not part of the product suite, not ISTQB-tagged
 
 ## Ideas for later
 - More tests: checkout flow (State Transition), registration form (Boundary Value Analysis on password rules)
@@ -41,3 +42,4 @@
     open report/index.html         # open the report (Mac)
     scripts/allure_report.sh       # build + open the Allure report from the last run
     scripts/dashboard.sh           # build + open the local dashboard (run history + report links)
+    scripts/check_tooling.sh       # tests for our own scripts (dashboard, history), not the app

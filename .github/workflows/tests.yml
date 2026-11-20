@@ -53,6 +53,13 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      # Tests for our own scripts (run history, dashboard, the site build below),
+      # not for the app. A few seconds, no network. Runs first, so a broken
+      # script fails the PR. Writes only to temp folders: nothing in
+      # allure-results/ or public/, so it never changes the reports or counts.
+      - name: Check the tooling (history and dashboard scripts)
+        run: scripts/check_tooling.sh
+
       - name: Run API tests
         run: pytest -m api --html=public/ci-api/index.html
 
