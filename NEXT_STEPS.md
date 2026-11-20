@@ -21,7 +21,7 @@
 1. [x] (2026-11-18: 9 failures triaged; H-004 healed; 2 product-bug candidates) Run the suite against the buggy build: `TOOLSHOP_ENV=with-bugs pytest`, then triage every failure (locator difference vs. real bug)
 2. [ ] Exploratory session 01 (60 min) using `docs/exploratory/session-01-browse-search-filter.md`
 3. [x] Issues #1–#7 filed (2026-11-19); add screenshots to #2–#7. File each real bug as a GitHub issue (bug template), list it in `docs/BUGS.md`
-4. [ ] New tests: checkout (State Transition), registration form (Boundary Value Analysis)
+4. [~] Written 2026-11-19: `tests/ui/test_registration.py` (11 cases), `tests/ui/test_checkout.py` (3). First run + triage pending
 5. [ ] Accessibility checks (axe-core, WCAG)
 6. [~] Allure report added 2026-11-20, local only (README, "Allure report"). Checked on with-bugs: labels, issue links #1/#8/#9, screenshots, traces, categories. Not yet in CI or on GitHub Pages
 

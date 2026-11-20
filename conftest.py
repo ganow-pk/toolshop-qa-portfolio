@@ -19,6 +19,7 @@ from pathlib import Path
 
 import allure
 import pytest
+from playwright.sync_api import expect
 
 try:  # pytest-html is optional: the suite still runs without it
     from pytest_html import extras as html_extras
@@ -28,9 +29,12 @@ except ImportError:
 from api.toolshop_api import ToolshopApi
 from config import settings
 from config.logger import log
+from pages.cart_page import CartPage
+from pages.checkout_page import CheckoutPage
 from pages.home_page import HomePage
 from pages.login_page import LoginPage
 from pages.product_page import ProductPage
+from pages.register_page import RegisterPage
 
 ISTQB_TECHNIQUES = {
     "Equivalence Partitioning",
@@ -103,6 +107,24 @@ def product_page(home_page) -> ProductPage:
     product = ProductPage(home_page.page)
     product.wait_until_loaded()
     return product
+
+
+@pytest.fixture
+def register_page(page) -> RegisterPage:
+    return RegisterPage(page).open()
+
+
+@pytest.fixture
+def cart_with_item(product_page) -> CartPage:
+    """One in-stock product in the cart, with the cart page open."""
+    product_page.add_to_cart()
+    expect(product_page.header.cart_quantity).to_have_text("1")
+    return CartPage(product_page.page).open()
+
+
+@pytest.fixture
+def checkout(page) -> CheckoutPage:
+    return CheckoutPage(page)
 
 
 # ---------- Rule 3: technique and heal columns in the HTML report ----------
