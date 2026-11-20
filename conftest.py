@@ -232,8 +232,16 @@ def pytest_addoption(parser):
                      help="add this run to the dashboard history even if it is not a full run")
 
 
+@pytest.hookimpl(tryfirst=True)  # before pytest-html reads --html
 def pytest_configure(config):
-    """Short issue links: @allure.issue("8") opens GitHub issue #8."""
+    """Short issue links: @allure.issue("8") opens GitHub issue #8.
+
+    Also: listing tests (--collect-only) runs nothing, so it must not replace
+    the last run's HTML report with an empty one. (Allure already leaves
+    allure-results alone when only collecting.)
+    """
+    if config.option.collectonly and hasattr(config.option, "htmlpath"):
+        config.option.htmlpath = None
     if hasattr(config.option, "allure_link_pattern"):
         config.option.allure_link_pattern.append(("issue", settings.ISSUE_URL_PATTERN))
 
