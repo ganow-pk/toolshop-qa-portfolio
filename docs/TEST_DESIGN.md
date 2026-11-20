@@ -10,6 +10,8 @@ Every test in this suite is tagged with the ISTQB black-box technique it applies
 | State Transition Testing | Model the states something moves through and test the moves, valid and invalid. | `tests/ui/test_product_and_cart.py` (cart count), `tests/ui/test_checkout.py` (guest checkout: cart → sign in → address → payment) |
 | Error Guessing | Use experience to target likely mistakes. | `tests/ui/test_registration.py` (does the length error message match the rule?) |
 
+One exception, on purpose: the tests in `tooling_tests/` check our own scripts (dashboard, run history, CI site build), not the app, so they carry no ISTQB tag and run separately with `scripts/check_tooling.sh` (README, "Tooling tests"). A plain `pytest` never collects them.
+
 ## Avoiding side effects on a shared site
 - **Registration** rules are checked one field at a time: the form only shows field errors after Register is clicked, so each test fills one field and clicks Register. The rest of the form is empty, so the browser blocks the submit, nothing reaches the app, and no account is created.
 - **Checkout** uses guest checkout, so no shared account is logged in or changed.
@@ -25,6 +27,6 @@ The rule (`conftest.py`, rule 5, using `pytest-rerunfailures`):
 - **Only when the request itself failed:** Playwright's `APIRequestContext` timed out or could not connect (`ECONNREFUSED`, `ECONNRESET`, DNS errors). The patterns are in `conftest.py` (`API_RETRY_ON`).
 - **Real failures fail at once.** A failed assertion, including a wrong status code (`assert 404 == 200`), is never retried.
 - **UI tests are never retried.** A UI timeout can be a locator or wait problem, and those get triaged and healed ([HEALING_RULES.md](HEALING_RULES.md)), not retried away.
-- **Retries stay visible.** The HTML report lists every rerun as its own "Rerun" row with the error, and the Allure report shows it on the test's Retries tab. A test that needed a retry is never shown as a clean first-try pass.
+- **Retries stay visible.** The HTML report lists every rerun as its own "Rerun" row with the error, and the Allure report shows it on the test's Retries tab. The dashboard counts it in its **Retried** column (a retried test counts once, by its last attempt). A test that needed a retry is never shown as a clean first-try pass.
 
 A retry is not a heal: it changes nothing in the test and loosens no assertion. If the same test needs a retry again and again, treat that as a finding and investigate.

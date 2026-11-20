@@ -2,7 +2,7 @@
 
 [![Tests](https://github.com/ganow-pk/toolshop-qa-portfolio/actions/workflows/tests.yml/badge.svg)](https://github.com/ganow-pk/toolshop-qa-portfolio/actions/workflows/tests.yml)
 
-**[View the test reports](https://ganow-pk.github.io/toolshop-qa-portfolio/)**: the daily CI run (API) and the latest full run (UI + API)
+**[View the test dashboard](https://ganow-pk.github.io/toolshop-qa-portfolio/)**: pass/fail history of every run, plus the HTML and Allure reports of the daily CI run (API) and the latest full run (UI + API)
 
 UI and API test automation for [Practice Software Testing](https://practicesoftwaretesting.com) (the "Toolshop" demo store), built with **Playwright, Python, and pytest** using the **Page Object Model**.
 
@@ -25,7 +25,9 @@ api/toolshop_api.py     REST API client. The only place endpoint paths live
 tests/ui/               Browser tests
 tests/api/              API tests
 conftest.py             Fixtures and the suite-wide rules (technique tags, report columns, Allure labels, API retry)
+tooling_tests/          Tests for our own scripts (dashboard, run history, CI site build), not for the app
 allurerc.mjs            Allure 3 settings (report name, output folder, failure categories)
+scripts/                Dashboard (build_dashboard.py, run_history.py, dashboard.sh), Allure, publishing, and tooling-test (check_tooling.sh) helpers
 docs/                   Test design, healing rules, heal log, AI guardrails, bugs
 ```
 
@@ -47,6 +49,22 @@ The report is written to `report/index.html`. Screenshots and traces of failures
 ```bash
 TOOLSHOP_ENV=with-bugs pytest     # the site's intentionally buggy build
 ```
+
+## Morning run and dashboard
+```bash
+git switch develop && git pull
+source .venv/bin/activate
+pytest                    # full run: added to history/local-runs.json automatically
+scripts/dashboard.sh      # opens report/dashboard.html: chart of every run + links to the reports
+```
+Only a plain `pytest` (no paths, `-k`, `-m`, `-x`, `--lf`) is recorded, so a quick partial run doesn't spoil the chart. Add `--record-run` to record one anyway. The history file is personal (gitignored); `scripts/publish_local_run.py` copies it to the live dashboard. Try things without touching it: `TOOLSHOP_RUN_HISTORY=/tmp/try.json pytest`.
+
+## Tooling tests (our scripts, not the app)
+`tooling_tests/` checks the scripts behind the dashboard: run counting, the history file, downloading the live history, the dashboard page (including escaping), the CI site-build steps, and which `pytest` commands count as a full run.
+```bash
+scripts/check_tooling.sh      # a few seconds, no browser, no internet
+```
+They are deliberately kept **outside the product suite**: a plain `pytest` never collects them, they have their own `tooling_tests/pytest.ini`, and they carry no ISTQB tags (they test our code, not the app's behaviour). They write only to temp folders, so `report/`, `allure-results/` and the run history are never touched. CI runs them first on every push and PR.
 
 ## Allure report (local)
 Every run also writes Allure results to `allure-results/` (emptied at the start of each run). The HTML report above stays the main one; Allure adds filtering by tag, failure categories, and a trace viewer.
@@ -70,9 +88,11 @@ browsers running on GitHub's cloud runners. From a normal machine, all 17 tests 
 The cause is the environment, not the tests or the product, and getting past a bot check would
 defeat its purpose. So the pipeline is built around it:
 - **CI** runs the API tests live every day.
-- **Pull requests** (into develop or main) run the API tests too; the report is attached to the run, not published.
-- **The full suite** runs locally with `python scripts/publish_local_run.py`, which saves the dated report to
-  `reports/local-full-run.html`. CI publishes it next to the API report once it reaches main (see docs/RELEASING.md).
+- **Pull requests** (into develop or main) and runs on **develop** run the API tests too; the report is attached to the run as a download (`api-test-report`), not published. Develop's report is a preview of the next release.
+- **The full suite** runs locally with `python scripts/publish_local_run.py`, which saves the report to
+  `reports/local-full-run.html` and the local run history to `reports/history-local.json` (`--allure` also saves the Allure report).
+  CI publishes them on the dashboard once they reach main (see docs/RELEASING.md).
+- **The dashboard** on GitHub Pages keeps the newest 60 CI runs in `history/ci.json` on the site itself. Only main adds to it; PRs and develop get a one-run preview in their download.
 
 ## How changes are made
 ```
