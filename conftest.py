@@ -1,6 +1,6 @@
 """Shared fixtures and suite-wide rules.
 
-Four rules are enforced here, so nobody has to remember them:
+Five rules are enforced here, so nobody has to remember them:
   1. Every test must carry an ISTQB test-design technique tag (@pytest.mark.istqb).
      A test without one stops the run before it starts.
   2. Elements are found by the app's data-test attribute (settings.TEST_ID_ATTRIBUTE).
@@ -8,6 +8,10 @@ Four rules are enforced here, so nobody has to remember them:
      with its heal-log ID, so a healed pass is never passed off as a clean pass.
   4. UI tests get a screenshot embedded in the report (settings.REPORT_SCREENSHOTS),
      so evidence is in the report itself, not in a folder somewhere.
+  5. API tests get one retry, and only when the request itself timed out or could
+     not connect (the public practice site is sometimes slow). A failed assertion
+     or a wrong status code fails at once. UI tests are never retried. Every retry
+     shows up in the HTML and Allure reports. See docs/TEST_DESIGN.md.
 
 The Allure report (a second report, next to the HTML one) gets the same facts:
 technique, heal ID, UI / API suite, screenshot, step log, and the Playwright
@@ -57,6 +61,35 @@ def pytest_collection_modifyitems(config, items):
             "Test design rule broken. Tag each test with one of "
             f"{sorted(ISTQB_TECHNIQUES)}:\n  " + "\n  ".join(problems)
         )
+    _retry_api_network_errors_once(items)
+
+
+# ---------- Rule 5: one retry for API tests, network errors only ----------
+# pytest-rerunfailures checks each pattern with re.search against
+# "<ExceptionClass>: <message>", e.g.
+#   "TimeoutError: APIRequestContext.fetch: Timeout 30000ms exceeded."
+# Both patterns start at the class name, so an AssertionError (a real failure,
+# including a wrong status code) can never match and is never retried.
+
+API_RETRY_ON = [
+    # The request got no answer in time.
+    r"^TimeoutError: APIRequestContext\.\w+: Timeout \d+ms exceeded",
+    # The request never reached the server, or the connection broke.
+    r"^Error: APIRequestContext\.\w+: .*(?:ECONNRESET|ECONNREFUSED|ETIMEDOUT"
+    r"|ENOTFOUND|EAI_AGAIN|getaddrinfo|socket hang up)",
+]
+API_RETRIES = 1
+API_RETRY_DELAY_SECONDS = 5
+
+
+def _retry_api_network_errors_once(items):
+    for item in items:
+        if item.get_closest_marker("api") and not item.get_closest_marker("ui"):
+            item.add_marker(pytest.mark.flaky(
+                reruns=API_RETRIES,
+                reruns_delay=API_RETRY_DELAY_SECONDS,
+                only_rerun=API_RETRY_ON,
+            ))
 
 
 # ---------- Rule 2: configuration and fixtures ----------
