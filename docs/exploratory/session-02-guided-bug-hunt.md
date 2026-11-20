@@ -38,7 +38,7 @@ Guide hunt numbers are listed so it's clear which findings were guided and which
 | 12 | Product detail | **Add to favourites** shows a red error toast and adds nothing | Guide #7 | Major | [#10](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/10) |
 | 13 | Product detail | **Add to cart** and **Add to favourites** buttons overlap | Guide #10 | Minor | |
 | 14 | Navigation | **Home** link goes to the Contact page (even from the home page); the only way home is the broken logo | Guide #15 | Major | [#11](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/11) |
-| 15 | Navigation | User menu shows **"User Data not found"** instead of the user's name (also caught by the automated login test on 2026-11-18, but not reproduced by hand that day: intermittent) | Guide #11 | Minor | |
+| 15 | Navigation | User menu shows **"User Data not found"** instead of the user's name (also caught by the automated login test on 2026-11-18, but not reproduced by hand that day: intermittent) | Guide #11 | Minor | [#12](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/12) |
 | 16 | Profile | **"City not found"** shown in the City field | Guide #12 | Minor | |
 | 17 | Profile | **Password update** shows success and logs the user out, but the new password then fails to log in (user locked out) | Guide #21 | Critical || [#5](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/5) |
 | 18 | Visual | Site **logo** and **search icon** images are broken | Guide #8 | Minor | |

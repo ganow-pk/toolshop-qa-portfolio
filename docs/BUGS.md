@@ -16,9 +16,9 @@ Defects found while testing are filed as GitHub issues using the [bug report tem
 | [#9](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/9) | Cart badge stays at 1 after adding the same product a second time | with-bugs | Major | Exploratory (Session 02), independent; automated test | Open |
 | [#10](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/10) | Add to favourites shows an error and adds nothing | with-bugs | Major | Exploratory (Session 02), guide hunt #7 | Open |
 | [#11](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/11) | "Home" link in the top navigation opens the Contact page | with-bugs | Major | Exploratory (Session 02), guide hunt #15 | Open |
+| [#12](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/12) | User menu shows "User Data not found" instead of the user's name after login | with-bugs | Minor | Automated test failure, confirmed by exploratory testing (Session 02, guide hunt #11) | Open |
 
 ## Investigated, not reproduced (or reproduced later)
 | Date | Observation | Result |
 |------|-------------|--------|
-| 2026-11-18 | with-bugs build: after a successful login, the automated test saw the user menu read "User Data not found" instead of the user's name (failure screenshot). | **Later reproduced** by hand on 2026-11-19 during [Session 02](exploratory/session-02-guided-bug-hunt.md) (finding #15; site guide hunt #11). Intermittent: not seen on 2026-11-18, seen on 2026-11-19. Not filed separately (known seeded bug). |
 | 2026-11-17 / 18 | While the shared `customer@` demo account was locked (API: `423 Locked`), the login page appeared to show no error message (failure screenshot from H-001). | Re-tested by hand on 2026-11-18: the account had been unlocked and login succeeded, so the locked state could not be recreated. Not filed. Recheck if the account is locked again. |
