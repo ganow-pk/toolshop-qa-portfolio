@@ -31,6 +31,7 @@ def test_password_one_below_minimum_length_is_rejected(register_page):
     expect(register_page.error("password")).to_be_visible()
 
 
+@allure.issue("16", name="#16 Registration requires 10 characters (with-bugs)")
 @pytest.mark.istqb("Boundary Value Analysis")
 def test_password_at_minimum_length_is_accepted(register_page):
     register_page.enter("password", PASSWORD_8)
@@ -39,6 +40,7 @@ def test_password_at_minimum_length_is_accepted(register_page):
 
 
 @allure.issue("15", name="#15 Password message says 6 characters, rule is 8 (main)")
+@allure.issue("16", name="#16 Registration requires 10 characters (with-bugs)")
 @pytest.mark.istqb("Error Guessing")
 def test_password_length_message_matches_the_rule(register_page):
     """The rule list under the field says "at least 8 characters".

@@ -10,13 +10,21 @@ Invalid moves are checked too: the flow must not advance when a required
 step is incomplete.
 
 Uses guest checkout, so no shared account is logged in or changed.
+Builds without guest checkout (with-bugs) skip these tests with a visible reason,
+so a missing feature never shows up as a product failure.
 """
 import pytest
 from playwright.sync_api import expect
 
-from config import test_data
+from config import settings, test_data
 
-pytestmark = [pytest.mark.ui]
+pytestmark = [
+    pytest.mark.ui,
+    pytest.mark.skipif(
+        not settings.GUEST_CHECKOUT,
+        reason=f"Guest checkout is not available on the {settings.ENV_NAME} build",
+    ),
+]
 
 
 @pytest.mark.istqb("State Transition Testing")
