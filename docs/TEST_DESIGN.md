@@ -25,6 +25,6 @@ The rule (`conftest.py`, rule 5, using `pytest-rerunfailures`):
 - **Only when the request itself failed:** Playwright's `APIRequestContext` timed out or could not connect (`ECONNREFUSED`, `ECONNRESET`, DNS errors). The patterns are in `conftest.py` (`API_RETRY_ON`).
 - **Real failures fail at once.** A failed assertion, including a wrong status code (`assert 404 == 200`), is never retried.
 - **UI tests are never retried.** A UI timeout can be a locator or wait problem, and those get triaged and healed ([HEALING_RULES.md](HEALING_RULES.md)), not retried away.
-- **Retries stay visible.** The HTML report lists every rerun as its own "Rerun" row with the error, and the Allure report shows it on the test's Retries tab. A test that needed a retry is never shown as a clean first-try pass.
+- **Retries stay visible.** The HTML report lists every rerun as its own "Rerun" row with the error, and the Allure report shows it on the test's Retries tab. The dashboard counts it in its **Retried** column (a retried test counts once, by its last attempt). A test that needed a retry is never shown as a clean first-try pass.
 
 A retry is not a heal: it changes nothing in the test and loosens no assertion. If the same test needs a retry again and again, treat that as a finding and investigate.

@@ -64,3 +64,11 @@ TEST_ID_ATTRIBUTE = "data-test"
 #   A test marked @pytest.mark.healed(...) links to the heal log.
 ISSUE_URL_PATTERN = "https://github.com/ganow-pk/toolshop-qa-portfolio/issues/{}"
 HEAL_LOG_URL = "https://github.com/ganow-pk/toolshop-qa-portfolio/blob/main/docs/heal_log.md"
+
+# Run history for the dashboard (scripts/dashboard.sh, README "Dashboard").
+# Full local runs are added here at the end of `pytest` (conftest.py, rule 6).
+# The file is personal and gitignored; scripts/publish_local_run.py copies it to
+# reports/history-local.json for the live site. Point it elsewhere for experiments:
+#   TOOLSHOP_RUN_HISTORY=/tmp/try.json pytest
+RUN_HISTORY_FILE = os.getenv("TOOLSHOP_RUN_HISTORY", "history/local-runs.json")
+RUN_HISTORY_CAP = 60   # keep the newest 60 runs per history file

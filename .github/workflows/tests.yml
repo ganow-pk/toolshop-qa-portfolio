@@ -7,6 +7,7 @@ name: Tests
 # UI tests are not run here: the practice site's Cloudflare bot check blocks
 # browsers on GitHub's cloud runners. The API tests run live every day; the
 # full UI + API run is published from a local machine (scripts/publish_local_run.py).
+# main also keeps the dashboard's run history (history/ci.json on the live site).
 # Pull requests and develop never deploy to GitHub Pages: a PR's report is
 # attached to the run as a downloadable artifact instead.
 
@@ -35,6 +36,12 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
+    outputs:
+      site: ${{ steps.site.outcome }}   # publish-report deploys only if the site was built
+    env:
+      # true only for runs on main that are not PRs: the same guard as the deploy.
+      PUBLISH: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+      SITE_URL: https://ganow-pk.github.io/toolshop-qa-portfolio
     steps:
       - uses: actions/checkout@v4
 
@@ -49,41 +56,101 @@ jobs:
       - name: Run API tests
         run: pytest -m api --html=public/ci-api/index.html
 
-      # PRs and develop: keep the report with the run as a download, so a failing
-      # PR can be inspected and develop's report previews the next release.
-      # (main publishes its report to GitHub Pages instead.)
+      # Allure report of this run, next to the HTML report. Optional: if npm is
+      # down, the site is still built, just without the Allure link.
+      - uses: actions/setup-node@v4
+        if: always()
+        with:
+          node-version: "22"
+
+      - name: Build the Allure report
+        if: always()
+        continue-on-error: true
+        run: npx --yes allure@3.33.0 generate allure-results --output public/ci-api/allure
+
+      # Dashboard history. main: download the live history, add this run.
+      # A 404 (no history yet) starts a new one; any other download problem
+      # fails this step, and then nothing is deployed, so the live history is
+      # never replaced by an empty one. PRs and develop: a one-run preview only;
+      # they never read or write the live history.
+      - name: Add this run to the run history
+        id: history
+        if: always()
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ "$PUBLISH" = "true" ]; then
+            python scripts/run_history.py fetch --url "$SITE_URL/history/ci.json" --out public/history/ci.json
+          else
+            mkdir -p public/history && echo "[]" > public/history/ci.json
+          fi
+          python scripts/run_history.py record --results allure-results \
+            --history public/history/ci.json --source ci \
+            --branch "$GITHUB_REF_NAME" --commit "$GITHUB_SHA" --run-url "$RUN_URL"
+
+      - name: Build the dashboard
+        id: site
+        if: always() && steps.history.outcome == 'success'
+        run: |
+          mkdir -p public/full-run
+          if [ -f reports/local-full-run.html ]; then
+            cp reports/local-full-run.html public/full-run/index.html
+          else
+            echo "<p>No local full run published yet.</p>" > public/full-run/index.html
+          fi
+          LINKS=(--link "Full run (UI + API): HTML report=full-run/")
+          if [ -f reports/local-full-run-allure.html ]; then
+            mkdir -p public/full-run/allure
+            cp reports/local-full-run-allure.html public/full-run/allure/index.html
+            LINKS+=(--link "Full run (UI + API): Allure report=full-run/allure/")
+          fi
+          LINKS+=(--link "Daily CI run (API): HTML report=ci-api/")
+          if [ -f public/ci-api/allure/index.html ]; then
+            LINKS+=(--link "Daily CI run (API): Allure report=ci-api/allure/")
+          fi
+          if [ -f reports/history-local.json ]; then
+            cp reports/history-local.json public/history/local.json
+          else
+            echo "[]" > public/history/local.json
+          fi
+          python scripts/build_dashboard.py --ci-history public/history/ci.json \
+            --local-history public/history/local.json --out public/index.html "${LINKS[@]}"
+
+      # PRs and develop: keep the report and a dashboard preview with the run as
+      # a download, so a failing PR can be inspected and develop's report
+      # previews the next release. (main publishes to GitHub Pages instead.)
       - name: Upload test report (PR and develop)
         if: always() && (github.event_name == 'pull_request' || github.ref == 'refs/heads/develop')
         uses: actions/upload-artifact@v4
         with:
           name: api-test-report
           path: |
-            public/ci-api/
+            public/
             allure-results/
           if-no-files-found: warn
 
-      # main only (never a PR, never develop): build the site for GitHub Pages.
-      - name: Build the report site
-        if: always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-        run: |
-          mkdir -p public/full-run
-          cp site/index.html public/index.html
-          if [ -f reports/local-full-run.html ]; then
-            cp reports/local-full-run.html public/full-run/index.html
-          else
-            echo "<p>No local full run published yet.</p>" > public/full-run/index.html
-          fi
+      # main only: a spare copy of the CI history, in case the live site ever
+      # loses it (restore by publishing this file as history/ci.json).
+      - name: Back up the run history (main)
+        if: always() && env.PUBLISH == 'true' && steps.site.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: run-history
+          path: public/history/
+          retention-days: 90
 
+      # main only (never a PR, never develop), and only if the dashboard was built.
       - name: Prepare site for GitHub Pages
-        if: always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        if: always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && steps.site.outcome == 'success'
         uses: actions/upload-pages-artifact@v3
         with:
           path: public/
 
   publish-report:
     needs: test
-    # Deploy from main only, never from a PR or develop; publish even if tests failed.
-    if: always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    # Deploy from main only, never from a PR or develop; publish even if tests
+    # failed, but never if the dashboard or its history could not be built.
+    if: always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && needs.test.outputs.site == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: read
