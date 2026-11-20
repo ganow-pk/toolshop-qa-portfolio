@@ -25,8 +25,9 @@ api/toolshop_api.py     REST API client. The only place endpoint paths live
 tests/ui/               Browser tests
 tests/api/              API tests
 conftest.py             Fixtures and the suite-wide rules (technique tags, report columns, Allure labels, API retry)
+tooling_tests/          Tests for our own scripts (dashboard, run history, CI site build), not for the app
 allurerc.mjs            Allure 3 settings (report name, output folder, failure categories)
-scripts/                Dashboard (build_dashboard.py, run_history.py, dashboard.sh), Allure, and publishing helpers
+scripts/                Dashboard (build_dashboard.py, run_history.py, dashboard.sh), Allure, publishing, and tooling-test (check_tooling.sh) helpers
 docs/                   Test design, healing rules, heal log, AI guardrails, bugs
 ```
 
@@ -57,6 +58,13 @@ pytest                    # full run: added to history/local-runs.json automatic
 scripts/dashboard.sh      # opens report/dashboard.html: chart of every run + links to the reports
 ```
 Only a plain `pytest` (no paths, `-k`, `-m`, `-x`, `--lf`) is recorded, so a quick partial run doesn't spoil the chart. Add `--record-run` to record one anyway. The history file is personal (gitignored); `scripts/publish_local_run.py` copies it to the live dashboard. Try things without touching it: `TOOLSHOP_RUN_HISTORY=/tmp/try.json pytest`.
+
+## Tooling tests (our scripts, not the app)
+`tooling_tests/` checks the scripts behind the dashboard: run counting, the history file, downloading the live history, the dashboard page (including escaping), the CI site-build steps, and which `pytest` commands count as a full run.
+```bash
+scripts/check_tooling.sh      # a few seconds, no browser, no internet
+```
+They are deliberately kept **outside the product suite**: a plain `pytest` never collects them, they have their own `tooling_tests/pytest.ini`, and they carry no ISTQB tags (they test our code, not the app's behaviour). They write only to temp folders, so `report/`, `allure-results/` and the run history are never touched. CI runs them first on every push and PR.
 
 ## Allure report (local)
 Every run also writes Allure results to `allure-results/` (emptied at the start of each run). The HTML report above stays the main one; Allure adds filtering by tag, failure categories, and a trace viewer.
