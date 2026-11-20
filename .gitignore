@@ -8,3 +8,5 @@ report/
 public/
 test-results/
 .env
+allure-results/
+allure-report/

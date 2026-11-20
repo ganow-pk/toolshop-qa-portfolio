@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Environment",
+    "matchedStatuses": ["failed", "broken"],
+    "messageRegex": "^[\\s\\S]*(?:Cloudflare|Just a moment|Verify you are human|Account locked|\\b423 (?:Locked|==)|got 423|net::ERR_|ECONNREFUSED|ECONNRESET|ENOTFOUND|getaddrinfo|ConnectionError|Connection (?:refused|reset|aborted))[\\s\\S]*$"
+  },
+  {
+    "name": "Product defect",
+    "matchedStatuses": ["failed"],
+    "messageRegex": "^AssertionError[\\s\\S]*$"
+  },
+  {
+    "name": "Test or locator problem",
+    "matchedStatuses": ["broken"],
+    "messageRegex": "^[\\s\\S]*(?:TimeoutError|Timeout \\d+ms exceeded|strict mode violation|waiting for (?:locator|get_by))[\\s\\S]*$"
+  }
+]

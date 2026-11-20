@@ -23,6 +23,7 @@
 3. [x] Issues #1–#7 filed (2026-11-19); add screenshots to #2–#7. File each real bug as a GitHub issue (bug template), list it in `docs/BUGS.md`
 4. [ ] New tests: checkout (State Transition), registration form (Boundary Value Analysis)
 5. [ ] Accessibility checks (axe-core, WCAG)
+6. [~] Allure report added 2026-11-20, local only (README, "Allure report"). Checked on with-bugs: labels, issue links #1/#8/#9, screenshots, traces, categories. Not yet in CI or on GitHub Pages
 
 ## Ideas for later
 - More tests: checkout flow (State Transition), registration form (Boundary Value Analysis on password rules)
@@ -34,3 +35,4 @@
     pytest --headed --slowmo 500   # watch the browser
     pytest -m smoke                # smoke set only
     open report/index.html         # open the report (Mac)
+    scripts/allure_report.sh       # build + open the Allure report from the last run

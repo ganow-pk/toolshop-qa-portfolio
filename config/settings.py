@@ -53,3 +53,9 @@ REPORT_SCREENSHOTS = os.getenv("TOOLSHOP_REPORT_SCREENSHOTS", "all")
 
 # Attribute the app puts on elements for testing: <button data-test="login-submit">
 TEST_ID_ATTRIBUTE = "data-test"
+
+# Allure report links (see README, "Allure report").
+#   @allure.issue("8") on a test links to GitHub issue #8.
+#   A test marked @pytest.mark.healed(...) links to the heal log.
+ISSUE_URL_PATTERN = "https://github.com/ganow-pk/toolshop-qa-portfolio/issues/{}"
+HEAL_LOG_URL = "https://github.com/ganow-pk/toolshop-qa-portfolio/blob/main/docs/heal_log.md"

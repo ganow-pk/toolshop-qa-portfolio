@@ -16,6 +16,7 @@ See docs/HEALING_RULES.md, "Never harm a shared environment".
 """
 import re
 
+import allure
 import pytest
 from playwright.sync_api import expect
 
@@ -24,6 +25,7 @@ from config import settings
 pytestmark = [pytest.mark.ui]
 
 
+@allure.issue("12", name="#12 User menu shows \"User Data not found\" (with-bugs)")
 @pytest.mark.smoke
 @pytest.mark.healed("H-001")
 @pytest.mark.istqb("Equivalence Partitioning")
@@ -42,6 +44,7 @@ def test_unregistered_email_is_rejected(login_page):
     expect(login_page.page).to_have_url(re.compile(r"/auth/login"))
 
 
+@allure.issue("1", name="#1 Login form gives no field feedback (with-bugs)")
 @pytest.mark.istqb("Equivalence Partitioning")
 @pytest.mark.parametrize(
     "email, password, error_field",

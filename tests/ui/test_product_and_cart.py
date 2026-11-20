@@ -8,6 +8,7 @@ Boundary Value Analysis: test right at an edge and one step past it.
 State Transition Testing: the cart moves between states.
   empty --add--> 1 item --add again--> 2 items
 """
+import allure
 import pytest
 from playwright.sync_api import expect
 
@@ -24,6 +25,7 @@ def test_quantity_cannot_go_below_one(product_page):
     expect(product_page.quantity).to_have_value("1")
 
 
+@allure.issue("8", name="#8 Quantity + / - buttons do nothing (with-bugs)")
 @pytest.mark.healed("H-004")
 @pytest.mark.istqb("Boundary Value Analysis")
 def test_quantity_increases_from_one_to_two(product_page):
@@ -34,6 +36,7 @@ def test_quantity_increases_from_one_to_two(product_page):
     expect(product_page.quantity).to_have_value("2")
 
 
+@allure.issue("9", name="#9 Cart badge stays at 1 after a second add (with-bugs)")
 @pytest.mark.smoke
 @pytest.mark.healed("H-004")
 @pytest.mark.istqb("State Transition Testing")

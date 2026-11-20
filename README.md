@@ -24,7 +24,8 @@ pages/                  Page objects. The only place locators live (data-test at
 api/toolshop_api.py     REST API client. The only place endpoint paths live
 tests/ui/               Browser tests
 tests/api/              API tests
-conftest.py             Fixtures and the suite-wide rules (technique tags, report columns)
+conftest.py             Fixtures and the suite-wide rules (technique tags, report columns, Allure labels)
+allurerc.mjs            Allure 3 settings (report name, output folder, failure categories)
 docs/                   Test design, healing rules, heal log, AI guardrails, bugs
 ```
 
@@ -46,6 +47,20 @@ The report is written to `report/index.html`. Screenshots and traces of failures
 ```bash
 TOOLSHOP_ENV=with-bugs pytest     # the site's intentionally buggy build
 ```
+
+## Allure report (local)
+Every run also writes Allure results to `allure-results/` (emptied at the start of each run). The HTML report above stays the main one; Allure adds filtering by tag, failure categories, and a trace viewer.
+
+Needs Node.js. The first run downloads the Allure 3 CLI through `npx` (no global install).
+```bash
+pytest                       # or: TOOLSHOP_ENV=with-bugs pytest
+scripts/allure_report.sh     # builds allure-report/ and opens it in the browser (Ctrl+C to stop)
+```
+What you'll see on each test:
+- **Labels and tags:** ISTQB technique, `smoke` / `ui` / `api`, and `healed H-00X` with a link to the [heal log](docs/heal_log.md). Tests are grouped under **UI tests** and **API tests**.
+- **Issue links:** tests that fail because of a known product bug link to the GitHub issue (`@allure.issue("8")`).
+- **Evidence:** the screenshot, the step log, and, for a failed UI test, the Playwright trace.
+- **Categories:** each failure is sorted into **Product defect** (assertion failed), **Test or locator problem** (timeout, strict mode), or **Environment** (Cloudflare, 423 Locked, network). The rules live in `config/allure_categories.json`; the first match wins. A category is a starting point for triage, not a verdict: a missing element can still be a product bug.
 
 ## Why UI tests don't run in CI
 On the first CI run, all 7 API tests passed and all 10 UI tests failed. The failure screenshots
