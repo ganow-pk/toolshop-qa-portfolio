@@ -1,6 +1,10 @@
-# Where we left off (2026-11-17)
+# Where we left off (2026-11-21)
 
-## Done
+**Now:** 31 product tests (UI + API, ISTQB-tagged) and 52 tooling tests. Live: v1.1 (test-history dashboard). 14 open bugs (#1–#12, #15, #16).
+Latest local runs (2026-11-21): main 30 passed / 1 failed (#15); with-bugs 20 passed / 8 failed (all filed) / 3 skipped.
+
+
+## Done (round 1, 2026-11-17)
 - [x] Framework built: Playwright + Python + pytest, POM, config-driven (`config/settings.py`)
 - [x] 17 tests (10 UI, 7 API), each tagged with an ISTQB technique (untagged tests block the run)
 - [x] First run: 14/17 passed. Healed H-001 (locked demo account, switched to `customer2@`) and H-002 (search read the old list, now waits on the search response). Re-run: **17/17 passed**
@@ -23,20 +27,21 @@
 3. [x] Issues #1–#7 filed (2026-11-19), #8–#12 (2026-11-20); add screenshots to #2–#7. File each real bug as a GitHub issue (bug template), list it in `docs/BUGS.md`
 4. [x] Written 2026-11-19: `tests/ui/test_registration.py` (11 cases), `tests/ui/test_checkout.py` (3). First run on main 2026-11-20: 4/14; first-run fixes (Register click, Continue as Guest tab) -> 13/14. Red on purpose: `test_password_length_message_matches_the_rule` (#15). with-bugs: 9 passed, 2 red on #16 (10-character rule), 3 checkout tests skipped (no guest checkout on that build). Fixes listed in the PR description (not heals)
 5. [ ] Accessibility checks (axe-core, WCAG)
-6. [~] Allure report added 2026-11-20, local only (README, "Allure report"). Checked on with-bugs: labels, issue links #1/#8/#9, screenshots, traces, categories. Not yet in CI or on GitHub Pages
+6. [x] Allure report added 2026-11-20: labels, issue links, screenshots, traces, failure categories. Built in CI and published on Pages since v1.1
 7. [x] API tests retry once on network timeouts only (PR #13 CI flake; `conftest.py` rule 5, `docs/TEST_DESIGN.md`). Allure "Environment" category now catches API request timeouts. Merged 2026-11-20 (PR #14)
-8. [~] Git flow (2026-11-20): feature/* -> develop -> release/vX.Y -> main, hotfix/* -> main. CI deploys Pages from main only; `release-source` check guards main. See `docs/RELEASING.md`
-
-9. [~] Dashboard (2026-11-20, `feature/dashboard`, not committed): stacked pass/fail chart per run, CI history on the live site (main only), local history from plain `pytest` runs (`conftest.py` rule 6), `scripts/dashboard.sh`. CI also builds the API Allure report. Needs a first real run on main to confirm Pages history (`history/ci.json`)
-10. [~] Tooling tests (2026-11-20, `feature/tooling-checks`, not committed): `tooling_tests/` (52 checks, ~3 s) for the dashboard and history scripts, run by `scripts/check_tooling.sh` and first in CI. Not part of the product suite, not ISTQB-tagged
+8. [x] Git flow (2026-11-20, PR #18, released v1.0): feature/* -> develop -> release/vX.Y -> main, hotfix/* -> main. CI deploys Pages from main only; `release-source` is a required check on main. See `docs/RELEASING.md`
+9. [x] Dashboard (PR #22, released v1.1): stacked pass/fail chart per run, CI history on the live site (main only), local history from plain `pytest` runs (`conftest.py` rule 6), `scripts/dashboard.sh`. Live history started 2026-11-20; first daily refresh passed 2026-11-21; first local runs 2026-11-21
+10. [x] Tooling tests (PR #24, released v1.1): `tooling_tests/` (52 checks, ~3 s) for the dashboard and history scripts, run by `scripts/check_tooling.sh` and first in CI. Not part of the product suite, not ISTQB-tagged
+11. [x] `--collect-only` no longer overwrites `report/index.html` (PR #27, on develop; ships with v1.2)
 
 ## Ideas for later
-- More tests: checkout flow (State Transition), registration form (Boundary Value Analysis on password rules)
-- Run against `with-bugs.practicesoftwaretesting.com` to find and write up real defects
+- Publish a full local run (`python scripts/publish_local_run.py`) so the live "Local full runs" chart starts
+- Follow-up exploratory charters: checkout and invoices, security basics, accessibility (see Session 02)
 - Use `docs/TEST_DESIGN.md` as ISTQB exam study notes
 
 ## Commands
-    pytest                         # all tests, headless
+    pytest                         # all tests, headless (main site; recorded for the dashboard)
+    TOOLSHOP_ENV=with-bugs pytest  # same suite against the buggy build
     pytest --headed --slowmo 500   # watch the browser
     pytest -m smoke                # smoke set only
     open report/index.html         # open the report (Mac)
