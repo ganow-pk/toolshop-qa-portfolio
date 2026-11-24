@@ -120,8 +120,11 @@ jobs:
           else
             echo "[]" > public/history/local.json
           fi
+          # Social preview card (og:image) for links pasted into LinkedIn, Slack, email.
+          cp assets/social-preview.png public/social-preview.png
           python scripts/build_dashboard.py --ci-history public/history/ci.json \
-            --local-history public/history/local.json --out public/index.html "${LINKS[@]}"
+            --local-history public/history/local.json --out public/index.html "${LINKS[@]}" \
+            --site-url "$SITE_URL"
 
       # PRs and develop: keep the report and a dashboard preview with the run as
       # a download, so a failing PR can be inspected and develop's report

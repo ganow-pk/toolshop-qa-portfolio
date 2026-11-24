@@ -98,6 +98,43 @@ def test_links_appear_in_the_order_given():
     assert page.index("First") < page.index("Second")
 
 
+# ---------- Social preview tags ----------
+
+SITE = "https://ganow-pk.github.io/toolshop-qa-portfolio"
+
+
+def test_site_url_adds_an_absolute_og_image():
+    page = build_dashboard.build([], None, [], site_url=SITE)
+
+    assert f'<meta property="og:image" content="{SITE}/social-preview.png">' in page
+    assert f'<meta property="og:url" content="{SITE}/">' in page
+    assert '<meta name="twitter:card" content="summary_large_image">' in page
+
+
+def test_trailing_slash_on_site_url_gives_no_double_slash():
+    page = build_dashboard.build([], None, [], site_url=SITE + "/")
+
+    assert f'<meta property="og:image" content="{SITE}/social-preview.png">' in page
+    assert "toolshop-qa-portfolio//" not in page
+
+
+def test_no_site_url_means_no_preview_tags():
+    for site_url in (None, ""):
+        page = build_dashboard.build([], None, [], site_url=site_url)
+
+        assert "og:" not in page
+        assert "twitter:card" not in page
+
+
+def test_quotes_and_tags_in_site_url_are_escaped():
+    page = build_dashboard.build([], None, [], site_url='https://x.test/"><script>alert(1)</script>')
+
+    assert page.count("</script>") == SCRIPT_TAGS_IN_TEMPLATE
+    assert "<script>alert" not in page
+    assert '"><' not in page.split("<style>")[0]
+    assert "https://x.test/&quot;&gt;&lt;script&gt;" in page
+
+
 # ---------- The command line ----------
 
 def build_command(tmp_path, *args):

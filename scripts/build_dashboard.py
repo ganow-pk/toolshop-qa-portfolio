@@ -13,8 +13,13 @@ Usage (from the project folder):
         --out report/dashboard.html --link "HTML report=index.html"
     python scripts/build_dashboard.py --ci-history public/history/ci.json \\
         --local-history public/history/local.json --out public/index.html \\
-        --link "Daily CI run (API): HTML report=ci-api/"
+        --link "Daily CI run (API): HTML report=ci-api/" \\
+        --site-url https://ganow-pk.github.io/toolshop-qa-portfolio
 Each --link is "Label=href" and appears in the order given.
+--site-url (the live site's address) adds the social preview tags (og:image
+and friends), so a link pasted into LinkedIn, Slack or email shows a picture
+card. The image itself, social-preview.png, must sit next to the page.
+Without it (the local dashboard) the page has no preview tags.
 """
 import argparse
 import html
@@ -29,14 +34,21 @@ REPO_URL = "https://github.com/ganow-pk/toolshop-qa-portfolio"
 BUGS_URL = REPO_URL + "/blob/main/docs/BUGS.md"
 SOURCES = (("ci", "Daily CI run: API tests"), ("local", "Local full runs: UI + API"))
 COUNTS = ("passed", "failed", "broken", "skipped", "retried")
+SOCIAL_TITLE = "Toolshop QA Portfolio - Playwright + Python Test Suite"
+SOCIAL_DESCRIPTION = ("Playwright, Python and pytest with Page Object Model; ISTQB-tagged tests, "
+                      "exploratory sessions, bug reports, and CI on GitHub Actions.")
+SOCIAL_IMAGE = "social-preview.png"   # 1200 x 627, copied next to the page by CI
+SOCIAL_IMAGE_ALT = "Toolshop QA Portfolio: Playwright + Python test suite and test dashboard"
 
 
-def build(ci_history, local_history, links: list) -> str:
-    """A history of None leaves that source off the page (the local copy has no CI runs)."""
+def build(ci_history, local_history, links: list, site_url=None) -> str:
+    """A history of None leaves that source off the page (the local copy has no CI runs).
+    site_url (the live site's address) adds the social preview tags; None leaves them out."""
     histories = {source: _clean(history) for source, history in
                  (("ci", ci_history), ("local", local_history)) if history is not None}
     all_links = list(links) + [("Bug list", BUGS_URL), ("Source code and docs", REPO_URL)]
     return PAGE.format(
+        social=_social_html(site_url),
         latest=_latest_html(histories),
         charts=_charts_html(histories),
         links="\n".join(f'    <a class="card" href="{_href(href)}">{_e(label)} &rarr;</a>'
@@ -51,6 +63,24 @@ def build(ci_history, local_history, links: list) -> str:
 
 
 # ---------- Pieces of the page ----------
+
+def _social_html(site_url) -> str:
+    """Preview card tags for LinkedIn, Slack, email. og:image must be an absolute URL."""
+    if not site_url:
+        return ""
+    base = site_url.rstrip("/")
+    tags = [("name", "description", SOCIAL_DESCRIPTION),
+            ("property", "og:type", "website"),
+            ("property", "og:url", base + "/"),
+            ("property", "og:title", SOCIAL_TITLE),
+            ("property", "og:description", SOCIAL_DESCRIPTION),
+            ("property", "og:image", f"{base}/{SOCIAL_IMAGE}"),
+            ("property", "og:image:width", "1200"),
+            ("property", "og:image:height", "627"),
+            ("property", "og:image:alt", SOCIAL_IMAGE_ALT),
+            ("name", "twitter:card", "summary_large_image")]
+    return "".join(f'\n<meta {attr}="{_e(key)}" content="{_e(value)}">' for attr, key, value in tags)
+
 
 def _latest_html(histories: dict) -> str:
     lines = []
@@ -177,7 +207,7 @@ PAGE = """<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Toolshop QA Portfolio - Test Dashboard</title>
+<title>Toolshop QA Portfolio - Test Dashboard</title>{social}
 <style>
   :root {{ --ink:#1d2330; --muted:#5b6474; --line:#e3e6ec; --ok:#1f7a4d; --accent:#1d5fa8;
           --fail:#c0392b; --broken:#d68910; --skip:#9aa3b2; }}
@@ -306,9 +336,11 @@ def main(argv=None) -> int:
     parser.add_argument("--link", action="append", default=[], type=_parse_link,
                         help='"Label=href", repeatable')
     parser.add_argument("--out", required=True, help="where to write the HTML page")
+    parser.add_argument("--site-url", help="the live site's address, for the social preview tags")
     args = parser.parse_args(argv)
     try:
-        page = build(_read_history(args.ci_history), _read_history(args.local_history), args.link)
+        page = build(_read_history(args.ci_history), _read_history(args.local_history), args.link,
+                     site_url=args.site_url)
     except (OSError, ValueError) as error:
         print(f"ERROR: {error}", file=sys.stderr)
         return 1
