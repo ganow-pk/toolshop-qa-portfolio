@@ -20,7 +20,7 @@ import textwrap
 
 import pytest
 
-from paths import SCRIPTS, WORKFLOW
+from paths import REPO, SCRIPTS, WORKFLOW
 
 HISTORY_STEP = "Add this run to the run history"
 SITE_STEP = "Build the dashboard"
@@ -47,9 +47,10 @@ def workflow_step_script(step_name):
 
 @pytest.fixture
 def checkout(tmp_path):
-    """A temp copy of what the two steps need: scripts/, an API run's results, its report."""
+    """A temp copy of what the two steps need: scripts/, assets/, an API run's results, its report."""
     project = tmp_path / "checkout"
     shutil.copytree(SCRIPTS, project / "scripts", ignore=shutil.ignore_patterns("__pycache__"))
+    shutil.copytree(REPO / "assets", project / "assets")
     (project / "reports").mkdir()
     results = project / "allure-results"
     results.mkdir()
@@ -153,6 +154,17 @@ def test_site_is_built_with_placeholders_when_nothing_was_published(fake_site, r
     assert "Allure report" not in page   # no Allure reports in this checkout
     assert "No local full run published yet" in (checkout / "public" / "full-run" / "index.html").read_text()
     assert json.loads((checkout / "public" / "history" / "local.json").read_text()) == []
+
+
+def test_site_has_the_social_preview_image_and_tags(fake_site, run_step, checkout):
+    assert run_step(HISTORY_STEP, fake_site.url).returncode == 0
+
+    step = run_step(SITE_STEP, fake_site.url)
+
+    assert step.returncode == 0, step.stderr
+    assert (checkout / "public" / "social-preview.png").exists()
+    page = (checkout / "public" / "index.html").read_text()
+    assert f'<meta property="og:image" content="{fake_site.url}/social-preview.png">' in page
 
 
 def test_site_includes_published_local_run_and_allure_reports(fake_site, run_step, checkout):
