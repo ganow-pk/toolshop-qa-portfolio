@@ -35,6 +35,7 @@ BUGS_URL = REPO_URL + "/blob/main/docs/BUGS.md"
 SOURCES = (("ci", "Daily CI run: API tests"), ("local", "Local full runs: UI + API"))
 COUNTS = ("passed", "failed", "broken", "skipped", "retried")
 SOCIAL_TITLE = "Toolshop QA Portfolio - Playwright + Python Test Suite"
+SOCIAL_AUTHOR = "PK Ganow"
 SOCIAL_DESCRIPTION = ("Playwright, Python and pytest with Page Object Model; ISTQB-tagged tests, "
                       "exploratory sessions, bug reports, and CI on GitHub Actions.")
 SOCIAL_IMAGE = "social-preview.png"   # 1200 x 627, copied next to the page by CI
@@ -70,6 +71,7 @@ def _social_html(site_url) -> str:
         return ""
     base = site_url.rstrip("/")
     tags = [("name", "description", SOCIAL_DESCRIPTION),
+            ("name", "author", SOCIAL_AUTHOR),
             ("property", "og:type", "website"),
             ("property", "og:url", base + "/"),
             ("property", "og:title", SOCIAL_TITLE),
