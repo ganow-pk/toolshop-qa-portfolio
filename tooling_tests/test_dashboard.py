@@ -109,6 +109,7 @@ def test_site_url_adds_an_absolute_og_image():
     assert f'<meta property="og:image" content="{SITE}/social-preview.png">' in page
     assert f'<meta property="og:url" content="{SITE}/">' in page
     assert '<meta name="twitter:card" content="summary_large_image">' in page
+    assert '<meta name="author" content="PK Ganow">' in page
 
 
 def test_trailing_slash_on_site_url_gives_no_double_slash():
@@ -124,6 +125,7 @@ def test_no_site_url_means_no_preview_tags():
 
         assert "og:" not in page
         assert "twitter:card" not in page
+        assert 'name="author"' not in page
 
 
 def test_quotes_and_tags_in_site_url_are_escaped():
