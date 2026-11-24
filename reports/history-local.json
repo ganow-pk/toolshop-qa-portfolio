@@ -1,0 +1,44 @@
+[
+ {
+  "timestamp": "2026-11-21T14:51:00Z",
+  "source": "local",
+  "env": "main",
+  "branch": "develop",
+  "commit": "48455c0",
+  "passed": 30,
+  "failed": 1,
+  "broken": 0,
+  "skipped": 0,
+  "retried": 0,
+  "total": 31,
+  "duration_s": 59.2
+ },
+ {
+  "timestamp": "2026-11-21T14:54:11Z",
+  "source": "local",
+  "env": "with-bugs",
+  "branch": "develop",
+  "commit": "48455c0",
+  "passed": 20,
+  "failed": 8,
+  "broken": 0,
+  "skipped": 3,
+  "retried": 0,
+  "total": 31,
+  "duration_s": 74.7
+ },
+ {
+  "timestamp": "2026-11-24T15:19:14Z",
+  "source": "local",
+  "env": "main",
+  "branch": "feature/local-full-run-2026-11-24",
+  "commit": "33cb244",
+  "passed": 30,
+  "failed": 1,
+  "broken": 0,
+  "skipped": 0,
+  "retried": 0,
+  "total": 31,
+  "duration_s": 58.3
+ }
+]
