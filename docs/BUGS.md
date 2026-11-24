@@ -6,11 +6,11 @@ Defects found while testing are filed as GitHub issues using the [bug report tem
 | Issue | Title | Environment | Severity | Found by | Status |
 |-------|-------|-------------|----------|----------|--------|
 | [#1](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/1) | Login form gives no feedback when the email is invalid and password is blank | with-bugs | Major (usability) | Automated test failure, confirmed by exploratory testing | Open |
-| [#2](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/2) | Price range slider does not filter the product list | with-bugs | Major | Exploratory (Session 02), independent | Open |
+| [#2](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/2) | Price range slider does not filter the product list | with-bugs | Major | Exploratory (Session 02), independent; automated test | Open |
 | [#3](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/3) | Category filter shows an "Undefined" entry that lists no products | with-bugs | Major | Exploratory (Session 02), independent | Open |
 | [#4](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/4) | Update Profile fails with "resource not found" | with-bugs | Major | Exploratory (Session 02), independent | Open |
 | [#5](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/5) | Changing the password locks the user out of their account | with-bugs | Critical | Exploratory (Session 02), guide hunt #21 | Open |
-| [#6](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/6) | Sorting is reversed for every sort option | with-bugs | Major | Exploratory (Session 02), extends guide hunt #6 | Open |
+| [#6](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/6) | Sorting is reversed for every sort option | with-bugs | Major | Exploratory (Session 02), extends guide hunt #6; automated test | Open |
 | [#7](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/7) | Contact form: attachment help text lists formats that are then rejected | with-bugs | Major | Exploratory (Session 02), extends guide hunt #23 | Open |
 | [#8](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/8) | Quantity + / − buttons on the product page do nothing | with-bugs | Major | Exploratory (Session 02), guide hunt #7; automated test | Open |
 | [#9](https://github.com/ganow-pk/toolshop-qa-portfolio/issues/9) | Cart badge stays at 1 after adding the same product a second time | with-bugs | Major | Exploratory (Session 02), independent; automated test | Open |

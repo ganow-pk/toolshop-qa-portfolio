@@ -33,6 +33,7 @@ Latest local runs (2026-11-21): main 30 passed / 1 failed (#15); with-bugs 20 pa
 9. [x] Dashboard (PR #22, released v1.1): stacked pass/fail chart per run, CI history on the live site (main only), local history from plain `pytest` runs (`conftest.py` rule 6), `scripts/dashboard.sh`. Live history started 2026-11-20; first daily refresh passed 2026-11-21; first local runs 2026-11-21
 10. [x] Tooling tests (PR #24, released v1.1): `tooling_tests/` (52 checks, ~3 s) for the dashboard and history scripts, run by `scripts/check_tooling.sh` and first in CI. Not part of the product suite, not ISTQB-tagged
 11. [x] `--collect-only` no longer overwrites `report/index.html` (PR #27, on develop; ships with v1.2)
+12. [ ] Catalog regression tests (2026-11-21, branch `feature/catalog-regression-tests`, not merged): sorting #6, price slider #2, category names #3; 9 tests. main 9/9; with-bugs 8 failed on #6/#2, category test passes ("Undefined" not seen on with-bugs 2026-11-21)
 
 ## Ideas for later
 - Publish a full local run (`python scripts/publish_local_run.py`) so the live "Local full runs" chart starts

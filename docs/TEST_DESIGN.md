@@ -4,13 +4,20 @@ Every test in this suite is tagged with the ISTQB black-box technique it applies
 
 | Technique | What it means in one line | Where it is used |
 |-----------|---------------------------|------------------|
-| Equivalence Partitioning | Split inputs into groups the app should treat the same; test one value per group. | `tests/ui/test_login.py`, `tests/ui/test_search.py`, `tests/ui/test_registration.py` (phone), `tests/api/test_products_api.py` |
-| Boundary Value Analysis | Test exactly at an edge and one step past it, where off-by-one bugs live. | `tests/ui/test_product_and_cart.py` (quantity), `tests/ui/test_registration.py` (password length 7/8, calendar dates), `tests/api/test_products_api.py` (price filter) |
+| Equivalence Partitioning | Split inputs into groups the app should treat the same; test one value per group. | `tests/ui/test_login.py`, `tests/ui/test_search.py`, `tests/ui/test_registration.py` (phone), `tests/ui/test_catalog_sorting.py` (one case per sort option), `tests/ui/test_catalog_price_filter.py` (narrowing the range), `tests/api/test_products_api.py` |
+| Boundary Value Analysis | Test exactly at an edge and one step past it, where off-by-one bugs live. | `tests/ui/test_product_and_cart.py` (quantity), `tests/ui/test_registration.py` (password length 7/8, calendar dates), `tests/ui/test_catalog_price_filter.py` (slider edges around a real price), `tests/api/test_products_api.py` (price filter) |
 | Decision Table Testing | List every combination of conditions and the expected result; test each rule. | `tests/api/test_auth_api.py` |
 | State Transition Testing | Model the states something moves through and test the moves, valid and invalid. | `tests/ui/test_product_and_cart.py` (cart count), `tests/ui/test_checkout.py` (guest checkout: cart → sign in → address → payment) |
-| Error Guessing | Use experience to target likely mistakes. | `tests/ui/test_registration.py` (does the length error message match the rule?) |
+| Error Guessing | Use experience to target likely mistakes. | `tests/ui/test_registration.py` (does the length error message match the rule?), `tests/ui/test_catalog_categories.py` (placeholder category names like "Undefined") |
 
 One exception, on purpose: the tests in `tooling_tests/` check our own scripts (dashboard, run history, CI site build), not the app, so they carry no ISTQB tag and run separately with `scripts/check_tooling.sh` (README, "Tooling tests"). A plain `pytest` never collects them.
+
+## Catalog regression tests (issues #2, #3, #6)
+Read-only checks on the home page catalog. No account, no data created. They pass on main and fail on with-bugs, and each failure links to its issue in the Allure report.
+- **Sorting** (`test_catalog_sorting.py`, Equivalence Partitioning): one case per sort option (name A-Z / Z-A, price high-low / low-high). After picking an option, the first page must be in that order. CO2 options are left out: the card shows the rating only as a highlighted letter with no data-test text, and the option labels differ between builds.
+- **Price slider** (`test_catalog_price_filter.py`): Equivalence Partitioning (narrowing the range must change the list and leave only prices inside it) and Boundary Value Analysis. The slider moves in whole dollars and no product has a whole-dollar price, so the edges are the two slider values around a real price P (the cheapest product on the first page): `floor(P)-ceil(P)` shows the product, a max one step below P or a min one step above P hides it.
+- **Categories** (`test_catalog_categories.py`, Error Guessing): every category label is a real name, not empty or "Undefined" / "null". "Every category lists at least one product" is **not** asserted: on main, "Grinder" has no products and "Workbench" has none inside the default 1-100 price range.
+- **Waiting:** each step waits for the products API answer, then for the page to show exactly those products. The slider sends one API call per key press and the page draws whichever answer arrives last, so the page object waits for each answer before the next key press.
 
 ## Avoiding side effects on a shared site
 - **Registration** rules are checked one field at a time: the form only shows field errors after Register is clicked, so each test fills one field and clicks Register. The rest of the form is empty, so the browser blocks the submit, nothing reaches the app, and no account is created.
