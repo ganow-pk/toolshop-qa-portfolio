@@ -1,7 +1,7 @@
-# Where we left off (2026-11-21)
+# Where we left off (2026-11-24)
 
-**Now:** 31 product tests (UI + API, ISTQB-tagged) and 52 tooling tests. Live: v1.1 (test-history dashboard). 14 open bugs (#1–#12, #15, #16).
-Latest local runs (2026-11-21): main 30 passed / 1 failed (#15); with-bugs 20 passed / 8 failed (all filed) / 3 skipped.
+**Now:** 40 product tests (UI + API, ISTQB-tagged) and 57 tooling tests. Live: v1.5 (catalog regression tests, published local full run). 14 open bugs (#1–#12, #15, #16).
+Latest local runs: main (2026-11-24) 39 passed / 1 failed (#15); with-bugs (2026-11-21, before the catalog tests) 20 passed / 8 failed (all filed) / 3 skipped.
 
 
 ## Done (round 1, 2026-11-17)
@@ -32,11 +32,10 @@ Latest local runs (2026-11-21): main 30 passed / 1 failed (#15); with-bugs 20 pa
 8. [x] Git flow (2026-11-20, PR #18, released v1.0): feature/* -> develop -> release/vX.Y -> main, hotfix/* -> main. CI deploys Pages from main only; `release-source` is a required check on main. See `docs/RELEASING.md`
 9. [x] Dashboard (PR #22, released v1.1): stacked pass/fail chart per run, CI history on the live site (main only), local history from plain `pytest` runs (`conftest.py` rule 6), `scripts/dashboard.sh`. Live history started 2026-11-20; first daily refresh passed 2026-11-21; first local runs 2026-11-21
 10. [x] Tooling tests (PR #24, released v1.1): `tooling_tests/` (52 checks, ~3 s) for the dashboard and history scripts, run by `scripts/check_tooling.sh` and first in CI. Not part of the product suite, not ISTQB-tagged
-11. [x] `--collect-only` no longer overwrites `report/index.html` (PR #27, on develop; ships with v1.2)
-12. [ ] Catalog regression tests (2026-11-21, branch `feature/catalog-regression-tests`, not merged): sorting #6, price slider #2, category names #3; 9 tests. main 9/9; with-bugs 8 failed on #6/#2, category test passes ("Undefined" not seen on with-bugs 2026-11-21)
+11. [x] `--collect-only` no longer overwrites `report/index.html` (PR #27, released v1.2)
+12. [x] Catalog regression tests (PR #29, released v1.5 2026-11-24): sorting #6, price slider #2, category names #3; 9 tests. main 9/9; with-bugs 8 failed on #6/#2, category test passes ("Undefined" not seen on with-bugs 2026-11-21). Included in the published local full run of 2026-11-24 (40 tests: 39 passed, 1 failed on #15)
 
 ## Ideas for later
-- Publish a full local run (`python scripts/publish_local_run.py`) so the live "Local full runs" chart starts
 - Follow-up exploratory charters: checkout and invoices, security basics, accessibility (see Session 02)
 - Use `docs/TEST_DESIGN.md` as ISTQB exam study notes
 
